@@ -1,0 +1,38 @@
+<!-- zegar.html -->
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Zegar świata</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="page page--default">
+  <header class="topbar topbar--red">
+    <div class="topbar__title">Hej misiu, co tam?</div>
+    <nav class="topbar__nav">
+      <a class="btn btn--pill" href="zegar.html" aria-current="page">Zegar świata</a>
+      <a class="btn btn--pill" href="historia.html">Historia pewnej znajomości</a>
+      <a class="btn btn--pill" href="hugs.html">Free hugs</a>
+    </nav>
+  </header>
+
+  <main class="content content--full">
+    <div class="heart-wrap">
+      <svg class="heart" viewBox="0 0 512 512" aria-label="Serce z czasem">
+        <!-- path serca, rysowane stroke-dashoffset -->
+        <path class="heart__path" d="M256 448s-36.4-20.2-73.6-45.6C110.7 360.8 48 302.3 48 215.7
+          48 145.4 102.6 96 172.5 96c34.7 0 68 16.2 83.5 41.7C271.5 112.2 304.8 96 339.5 96
+          409.4 96 464 145.4 464 215.7c0 86.6-62.7 145.1-134.4 186.7C292.4 427.8 256 448 256 448z"/>
+      </svg>
+
+      <div class="heart-time">
+        <div class="heart-time__label">Czas od 29 września 2025, 18:00</div>
+        <div id="timeSince" class="heart-time__value">—</div>
+      </div>
+    </div>
+  </main>
+
+  <script src="main.js"></script>
+</body>
+</html>
