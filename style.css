@@ -196,6 +196,14 @@ body{
 .p--small{ margin-top: 14px; font-size: 13px; opacity: .7; }
 
 /* Zegar świata: serce + czas */
+.content--full{
+  min-height: calc(100vh - 72px);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding: 0;
+}
+
 .heart-wrap{
   width: 100%;
   display:flex;
@@ -206,41 +214,45 @@ body{
 }
 
 .heart{
-  width: min(780px, 90vw);  /* większe */
+  width: min(860px, 92vw);
   height: auto;
   display:block;
 }
 
+.heart-time{
+  position:absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -45%); /* lekko wyżej, wygląda naturalniej w sercu */
+  width: min(520px, 78vw);
+  text-align:center;
+  padding: 16px 18px;
+  border-radius: 18px;
+  background: rgba(255,255,255,.90);
+  border: 1px solid rgba(0,0,0,.08);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(6px);
+}
 .heart__path{
   fill: none;
   stroke: var(--red);
-  stroke-width: 26; /* grubsze */
+  stroke-width: 28;
   stroke-linecap: round;
   stroke-linejoin: round;
 
-  /* długość ścieżki ustawimy w JS jako --pathLen */
-  stroke-dasharray: var(--pathLen, 2000);
-  stroke-dashoffset: var(--pathLen, 2000);
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
 
   /* 3s rysuje, 2s pauza, 3s znika, 1s pauza */
   animation: heartCycle 9s ease-in-out infinite;
 }
 
 @keyframes heartCycle{
-  /* start: niewidoczne (dashoffset = len) */
-  0%   { stroke-dashoffset: var(--pathLen, 2000); }
-
-  /* rysowanie przez 3 sekundy -> 3/9 = 33.333% */
-  33.333% { stroke-dashoffset: 0; }
-
-  /* pauza 2 sekundy -> (3+2)/9 = 55.555% */
-  55.555% { stroke-dashoffset: 0; }
-
-  /* znikanie przez 3 sekundy -> (3+2+3)/9 = 88.888% */
-  88.888% { stroke-dashoffset: var(--pathLen, 2000); }
-
-  /* pauza 1 sekunda do końca */
-  100% { stroke-dashoffset: var(--pathLen, 2000); }
+  0% { stroke-dashoffset: 1000; }
+  33.333% { stroke-dashoffset: 0; }     /* 3s */
+  55.555% { stroke-dashoffset: 0; }     /* +2s pauza */
+  88.888% { stroke-dashoffset: 1000; }  /* +3s znika */
+  100% { stroke-dashoffset: 1000; }     /* +1s pauza */
 }
 
 
