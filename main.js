@@ -1,20 +1,19 @@
 // main.js
-(function () {
-  // Subtelna „klik animacja” też dla linków: dodaj klasę przy kliknięciu
-  document.addEventListener("click", (e) => {
-    const el = e.target.closest(".btn");
-    if (!el) return;
-    el.classList.add("btn--clicked");
-    window.setTimeout(() => el.classList.remove("btn--clicked"), 140);
-  });
+
+// Subtelna „klik animacja” też dla linków: dodaj klasę przy kliknięciu
+document.addEventListener("click", (e) => {
+  const el = e.target.closest(".btn, .topbar__homeBtn");
+  if (!el) return;
+  el.classList.add("btn--clicked");
+  window.setTimeout(() => el.classList.remove("btn--clicked"), 140);
+});
 
 // Timer na stronie zegar.html (odliczanie od 29.09.2025 18:00)
-document.addEventListener("DOMContentLoaded", () => {
+(function () {
   const timeEl = document.getElementById("timeSince");
   if (!timeEl) return;
 
   const start = new Date(2025, 8, 29, 18, 0, 0); // 8 = wrzesień (0-11)
-
   const pad2 = (n) => String(n).padStart(2, "0");
 
   const render = () => {
@@ -41,7 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   render();
   window.setInterval(render, 250);
-});
+})();
 
 // Free hugs: lokalny hug.mp4, play raz, freeze na pierwszej klatce, licznik
 (function () {
@@ -50,62 +49,55 @@ document.addEventListener("DOMContentLoaded", () => {
   const counterEl = document.getElementById("hugCount");
   if (!vid || !btn || !counterEl) return;
 
-  const VIDEO_SRC = "hug.mp4"; // <-- lokalny plik w repo
+  const VIDEO_SRC = "hug.mp4"; // lokalny plik w repo
 
-  // Konfiguracja video
   vid.muted = true;
   vid.loop = false;
   vid.playsInline = true;
   vid.preload = "auto";
   vid.controls = false;
 
-  // Podpięcie źródła
-  const src = document.createElement("source");
-  src.src = VIDEO_SRC;
-  src.type = "video/mp4";
-  vid.appendChild(src);
+  // Podpięcie źródła (tylko raz)
+  if (!vid.querySelector("source")) {
+    const src = document.createElement("source");
+    src.src = VIDEO_SRC;
+    src.type = "video/mp4";
+    vid.appendChild(src);
+  }
 
   let hugs = 0;
   let busy = false;
 
   const freezeToStart = () => {
     vid.pause();
-    try {
-      vid.currentTime = 0;
-    } catch (_) {}
+    try { vid.currentTime = 0; } catch (_) {}
   };
 
-  // Gwarancja pierwszej klatki po załadowaniu
   vid.addEventListener("loadedmetadata", () => {
     freezeToStart();
   });
 
-  // Po zakończeniu animacji
   vid.addEventListener("ended", () => {
     hugs += 1;
     counterEl.textContent = String(hugs);
-
     freezeToStart();
     busy = false;
     btn.disabled = false;
   });
 
-  // Klik przycisku
   btn.addEventListener("click", async () => {
     if (busy) return;
-
     busy = true;
     btn.disabled = true;
 
     try {
-      freezeToStart();      // zawsze start od 0
-      await vid.play();     // dokładnie jedno odtworzenie
+      freezeToStart();
+      await vid.play();
     } catch (err) {
       busy = false;
       btn.disabled = false;
     }
   });
 
-  // Startowo: zamarznięte na pierwszej klatce
   freezeToStart();
 })();
