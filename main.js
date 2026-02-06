@@ -9,36 +9,37 @@
   });
 
   // Zegar świata: licz od 29.09.2025 18:00 do teraz
+(function () {
   const timeEl = document.getElementById("timeSince");
-  if (timeEl) {
-    // Uwaga: to jest czas lokalny przeglądarki użytkownika
-    const start = new Date(2025, 8, 29, 18, 0, 0); // miesiące 0-11, więc 8 = wrzesień
+  if (!timeEl) return;
 
-    const pad2 = (n) => String(n).padStart(2, "0");
+  const start = new Date(2025, 8, 29, 18, 0, 0); // 8 = wrzesień
 
-    const render = () => {
-      const now = new Date();
-      let diffMs = now - start;
+  const pad2 = (n) => String(n).padStart(2, "0");
 
-      // jeśli data w przyszłości, pokaż odliczanie "do" tej daty
-      const isFuture = diffMs < 0;
-      diffMs = Math.abs(diffMs);
+  const render = () => {
+    const now = new Date();
+    let diffMs = now - start;
 
-      const totalSeconds = Math.floor(diffMs / 1000);
-      const seconds = totalSeconds % 60;
-      const totalMinutes = Math.floor(totalSeconds / 60);
-      const minutes = totalMinutes % 60;
-      const totalHours = Math.floor(totalMinutes / 60);
-      const hours = totalHours % 24;
-      const days = Math.floor(totalHours / 24);
+    const isFuture = diffMs < 0;
+    diffMs = Math.abs(diffMs);
 
-      const prefix = isFuture ? "Do tej chwili pozostało: " : "Minęło: ";
-      timeEl.textContent = `${prefix}${days} dni ${pad2(hours)}:${pad2(minutes)}:${pad2(seconds)}`;
-    };
+    const totalSeconds = Math.floor(diffMs / 1000);
+    const seconds = totalSeconds % 60;
+    const totalMinutes = Math.floor(totalSeconds / 60);
+    const minutes = totalMinutes % 60;
+    const totalHours = Math.floor(totalMinutes / 60);
+    const hours = totalHours % 24;
+    const days = Math.floor(totalHours / 24);
 
-    render();
-    window.setInterval(render, 250);
-  }
+    const prefix = isFuture ? "Do tej chwili pozostało: " : "Minęło: ";
+    timeEl.textContent = `${prefix}${days} dni ${pad2(hours)}:${pad2(minutes)}:${pad2(seconds)}`;
+  };
+
+  render();
+  window.setInterval(render, 250);
+})();
+
   // Zegar świata: dopasuj długość ścieżki serca do stroke-dash (żeby nie było "kreski")
 (function () {
   const path = document.querySelector(".heart__path");
