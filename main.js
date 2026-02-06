@@ -40,30 +40,25 @@
     window.setInterval(render, 250);
   }
 
-  // Free hugs: odtwarzanie raz, powrót do pierwszej klatki, licznik uruchomień
+// Free hugs: lokalny hug.mp4, play raz, freeze na pierwszej klatce, licznik
 (function () {
   const vid = document.getElementById("hugVid");
   const btn = document.getElementById("hugPlayBtn");
   const counterEl = document.getElementById("hugCount");
   if (!vid || !btn || !counterEl) return;
 
-  const gifUrl = "https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExcTh3MDI5aHJqMmV3a2lxd3d4MWI4cDVvbzFkcXJ4NnJpaGFraXk5MSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/1JmGiBtqTuehfYxuy9/giphy.gif";
+  const VIDEO_SRC = "hug.mp4"; // <-- lokalny plik w repo
 
-  // Giphy zazwyczaj ma MP4 pod tą samą ścieżką.
-  const mp4Url = gifUrl.replace(/giphy\.gif$/, "giphy.mp4");
-
-  // (Opcjonalnie) “poster” jako pierwsza klatka – często działa jako giphy_s.gif.
-  // Jeśli nie zadziała, i tak ustawimy first frame przez currentTime=0 po załadowaniu metadanych.
-  const stillUrl = gifUrl.replace(/giphy\.gif$/, "giphy_s.gif");
-
-  // Ustaw źródło video
+  // Konfiguracja video
   vid.muted = true;
   vid.loop = false;
   vid.playsInline = true;
-  vid.setAttribute("poster", stillUrl);
+  vid.preload = "auto";
+  vid.controls = false;
 
+  // Podpięcie źródła
   const src = document.createElement("source");
-  src.src = mp4Url;
+  src.src = VIDEO_SRC;
   src.type = "video/mp4";
   vid.appendChild(src);
 
@@ -71,21 +66,18 @@
   let busy = false;
 
   const freezeToStart = () => {
-    // “Zamrożenie” na pierwszej klatce
     vid.pause();
     try {
       vid.currentTime = 0;
-    } catch (_) {
-      // czasem blokuje przed metadata; wtedy dociśniemy po loadedmetadata
-    }
+    } catch (_) {}
   };
 
+  // Gwarancja pierwszej klatki po załadowaniu
   vid.addEventListener("loadedmetadata", () => {
-    // Upewnij się, że startujemy od 0 i stoimy
-    try { vid.currentTime = 0; } catch (_) {}
-    vid.pause();
+    freezeToStart();
   });
 
+  // Po zakończeniu animacji
   vid.addEventListener("ended", () => {
     hugs += 1;
     counterEl.textContent = String(hugs);
@@ -95,23 +87,22 @@
     btn.disabled = false;
   });
 
+  // Klik przycisku
   btn.addEventListener("click", async () => {
     if (busy) return;
+
     busy = true;
     btn.disabled = true;
 
-    // Odpal raz
     try {
-      // Zawsze zaczynaj od początku
-      try { vid.currentTime = 0; } catch (_) {}
-      await vid.play();
-    } catch (e) {
-      // Jeśli autoplay/gesture problem, odblokuj UI
+      freezeToStart();      // zawsze start od 0
+      await vid.play();     // dokładnie jedno odtworzenie
+    } catch (err) {
       busy = false;
       btn.disabled = false;
     }
   });
 
-  // Dla pewności: na wejściu “zamróź”
+  // Startowo: zamarznięte na pierwszej klatce
   freezeToStart();
 })();
