@@ -241,3 +241,72 @@ body{
   box-shadow: var(--shadow);
   background: #f2f2f2;
 }
+/* Hugs: układ z przyciskiem po lewej i licznikiem po prawej */
+.card--hugwide{
+  width: min(980px, 100%);
+}
+
+.hug-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.hug-side{
+  width: 220px;
+  display:flex;
+  flex-direction:column;
+  gap: 10px;
+  align-items:flex-start;
+}
+
+.hug-side--right{
+  align-items:flex-end;
+}
+
+.hug-hint{
+  font-size: 13px;
+  opacity: .7;
+}
+
+.hug-media{
+  flex: 1;
+  min-width: min(520px, 92vw);
+  display:flex;
+  justify-content:center;
+}
+
+.hug-video{
+  width: min(520px, 92vw);
+  height: auto;
+  border-radius: 18px;
+  border: 1px solid rgba(0,0,0,.10);
+  box-shadow: var(--shadow);
+  background: #f2f2f2;
+  display:block;
+}
+
+.hug-counter{
+  text-align:right;
+  padding: 12px 14px;
+  border-radius: 16px;
+  border: 1px solid rgba(0,0,0,.08);
+  background: rgba(255,255,255,.9);
+  box-shadow: 0 10px 24px rgba(0,0,0,.06);
+}
+
+.hug-counter__label{
+  font-weight: 800;
+  font-size: 12px;
+  opacity: .75;
+  margin-bottom: 4px;
+}
+
+.hug-counter__value{
+  font-weight: 900;
+  font-size: 28px;
+  letter-spacing: .3px;
+}
+
