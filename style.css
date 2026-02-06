@@ -119,6 +119,20 @@ body{
 .topbar__titleLink:active{
   transform: translateY(1px);
 }
+/* Na stronie głównej: homeBtn wygląda spokojniej */
+.is-home .topbar__homeBtn{
+  background: rgba(255,255,255,.32);
+  cursor: default;
+}
+
+.is-home .topbar__homeBtn:hover{
+  background: rgba(255,255,255,.32);
+  filter: none;
+}
+
+.is-home .topbar__homeBtn:active{
+  transform: none;
+}
 
 
 /* Buttons */
