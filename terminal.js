@@ -11,23 +11,27 @@
   const superCounterEl = document.getElementById("superCounter");
   const tableBody = document.getElementById("foundTableBody");
 
-  if (!out || !input || !caret || !promptRow || !promptLabel || !terminalBody || !normalCounterEl || !superCounterEl || !tableBody) {
+  if (
+    !out || !input || !caret || !promptRow || !promptLabel || !terminalBody ||
+    !normalCounterEl || !superCounterEl || !tableBody
+  ) {
     return;
   }
 
   // =========================
   // 1) KONFIG: HASŁA + TEKSTY
   // =========================
+  // UWAGA: klucze = to, co użytkownik wpisuje
   const NORMAL_COMMANDS = {
-    "haslo1":  "test",
-    "haslo2":  "TU wpiszesz wiadomość dla haslo2\n",
-    "haslo3":  "...\n",
-    "haslo4":  "...\n",
-    "haslo5":  "...\n",
-    "haslo6":  "...\n",
-    "haslo7":  "...\n",
-    "haslo8":  "...\n",
-    "haslo9":  "...\n",
+    "haslo1": "test\n",
+    "haslo2": "TU wpiszesz wiadomość dla haslo2\n",
+    "haslo3": "...\n",
+    "haslo4": "...\n",
+    "haslo5": "...\n",
+    "haslo6": "...\n",
+    "haslo7": "...\n",
+    "haslo8": "...\n",
+    "haslo9": "...\n",
     "haslo10": "...\n",
     "haslo11": "...\n",
     "haslo12": "...\n",
@@ -36,7 +40,7 @@
   };
 
   const SUPER_COMMANDS = {
-    "super1": "nigga",
+    "super1": "SUPER_MESSAGE_1\n", // <- wpisz tu swoją, nieobraźliwą treść
     "super2": "SUPER WIADOMOŚĆ 2 — wpisz swoją\n",
   };
 
@@ -47,7 +51,7 @@
   // 2) STARTOWY TEKST (TYPING)
   // =========================
   const bootLines = [
-    "C:\\Users\\misia> uruchom_historia.exe",
+    "C:\\Users\\misiu> uruchom_historia.exe",
     "",
     "[OK] Ładowanie wspomnień...",
     "[OK] Synchronizacja spojrzeń...",
@@ -56,7 +60,7 @@
     "=> A potem nagle: hello.",
     "=> I jakoś już zostało.",
     "",
-    "C:\\Users\\misia> "
+    "C:\\Users\\misiu> "
   ];
   const bootText = bootLines.join("\n");
 
@@ -70,43 +74,41 @@
   };
 
   const clickSound = () => {
-  if (!audioCtx) return;
-  const t = audioCtx.currentTime;
+    if (!audioCtx) return;
+    const t = audioCtx.currentTime;
 
-  // “thock”: krótki noise + delikatny lowpass
-  const bufferSize = 0.06; // sekundy
-  const sampleRate = audioCtx.sampleRate;
-  const buffer = audioCtx.createBuffer(1, Math.floor(sampleRate * bufferSize), sampleRate);
-  const data = buffer.getChannelData(0);
+    // “thock”: krótki noise + delikatny lowpass
+    const bufferSize = 0.06;
+    const sampleRate = audioCtx.sampleRate;
+    const buffer = audioCtx.createBuffer(1, Math.floor(sampleRate * bufferSize), sampleRate);
+    const data = buffer.getChannelData(0);
 
-  // krótkie “kliknięcie” z szybkim opadaniem
-  for (let i = 0; i < data.length; i += 1) {
-    const x = i / data.length;
-    const env = Math.exp(-x * 18);               // szybki decay
-    data[i] = (Math.random() * 2 - 1) * env * 0.8;
-  }
+    for (let i = 0; i < data.length; i += 1) {
+      const x = i / data.length;
+      const env = Math.exp(-x * 18);
+      data[i] = (Math.random() * 2 - 1) * env * 0.8;
+    }
 
-  const src = audioCtx.createBufferSource();
-  src.buffer = buffer;
+    const src = audioCtx.createBufferSource();
+    src.buffer = buffer;
 
-  const filter = audioCtx.createBiquadFilter();
-  filter.type = "lowpass";
-  filter.frequency.setValueAtTime(1400, t);     // mniej pisków
-  filter.Q.setValueAtTime(0.7, t);
+    const filter = audioCtx.createBiquadFilter();
+    filter.type = "lowpass";
+    filter.frequency.setValueAtTime(1400, t);
+    filter.Q.setValueAtTime(0.7, t);
 
-  const gain = audioCtx.createGain();
-  gain.gain.setValueAtTime(0.0, t);
-  gain.gain.linearRampToValueAtTime(0.05, t + 0.002);
-  gain.gain.linearRampToValueAtTime(0.0, t + 0.06);
+    const gain = audioCtx.createGain();
+    gain.gain.setValueAtTime(0.0, t);
+    gain.gain.linearRampToValueAtTime(0.05, t + 0.002);
+    gain.gain.linearRampToValueAtTime(0.0, t + 0.06);
 
-  src.connect(filter);
-  filter.connect(gain);
-  gain.connect(audioCtx.destination);
+    src.connect(filter);
+    filter.connect(gain);
+    gain.connect(audioCtx.destination);
 
-  src.start(t);
-  src.stop(t + 0.07);
-};
-
+    src.start(t);
+    src.stop(t + 0.07);
+  };
 
   // =========================
   // 4) TABELA 16x2 + “SZYFROWANIE”
@@ -116,7 +118,7 @@
   const ENC_INTERVAL_MS = 50;
   const ENC_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%&*?";
 
-  const tableRows = []; // { leftTd, rightTd, locked, intervalId }
+  const tableRows = [];
   const usedCommands = new Set();
   const usedNormals = new Set();
   const usedSupers = new Set();
@@ -145,7 +147,6 @@
     tableBody.appendChild(tr);
 
     const rowObj = { leftTd: tdLeft, rightTd: tdRight, locked: false, intervalId: null };
-
     rowObj.intervalId = window.setInterval(() => {
       if (!rowObj.locked) rowObj.leftTd.textContent = randEnc();
     }, ENC_INTERVAL_MS);
@@ -227,8 +228,7 @@
     step();
   };
 
-const cmdNotFound = (raw) => `'${raw}' Command not found.\n\n`;
-
+  const cmdNotFound = (raw) => `'${raw}' Command not found.\n\n`;
 
   const setPromptVisible = (visible) => {
     promptRow.style.display = visible ? "flex" : "none";
@@ -242,7 +242,6 @@ const cmdNotFound = (raw) => `'${raw}' Command not found.\n\n`;
 
   const focusInput = () => {
     input.focus();
-    // ustaw kursor na koniec
     const sel = window.getSelection();
     const range = document.createRange();
     range.selectNodeContents(input);
@@ -255,49 +254,49 @@ const cmdNotFound = (raw) => `'${raw}' Command not found.\n\n`;
   // 7) COMMAND HANDLING
   // =========================
   const normalize = (s) =>
-  s
-    .trim()
-    .toLowerCase()
-    .replace(/\s+/g, " "); // spłaszcza białe znaki
+    s.trim().toLowerCase().replace(/\s+/g, " ");
 
-const handleCommand = (raw) => {
-  const trimmed = raw.trim();
-  const key = normalize(trimmed);
+  const handleCommand = (raw) => {
+    const trimmed = raw.trim();
+    const key = normalize(trimmed);
 
-  // echo komendy
-  out.textContent += `C:\\Users\\misiu> ${trimmed}\n\n`;
-  scrollToBottom();
-
-  if (key.length === 0) return;
-
-  if (Object.prototype.hasOwnProperty.call(NORMAL_COMMANDS, key)) {
-    if (!usedCommands.has(key)) {
-      usedCommands.add(key);
-      usedNormals.add(key);
-      lockNextRowAsFound(trimmed);
-      updateCounters();
-    }
-    out.textContent += NORMAL_COMMANDS[key] + "\n\n";
+    // echo komendy w historii jako CMD
+    out.textContent += `C:\\Users\\misiu> ${trimmed}\n`;
     scrollToBottom();
-    return;
-  }
 
-  if (Object.prototype.hasOwnProperty.call(SUPER_COMMANDS, key)) {
-    if (!usedCommands.has(key)) {
-      usedCommands.add(key);
-      usedSupers.add(key);
-      lockNextRowAsFound(trimmed);
-      updateCounters();
+    if (key.length === 0) {
+      out.textContent += "\n";
+      scrollToBottom();
+      return;
     }
-    out.textContent += SUPER_COMMANDS[key] + "\n\n";
+
+    if (Object.prototype.hasOwnProperty.call(NORMAL_COMMANDS, key)) {
+      if (!usedCommands.has(key)) {
+        usedCommands.add(key);
+        usedNormals.add(key);
+        lockNextRowAsFound(trimmed);
+        updateCounters();
+      }
+      out.textContent += NORMAL_COMMANDS[key] + "\n";
+      scrollToBottom();
+      return;
+    }
+
+    if (Object.prototype.hasOwnProperty.call(SUPER_COMMANDS, key)) {
+      if (!usedCommands.has(key)) {
+        usedCommands.add(key);
+        usedSupers.add(key);
+        lockNextRowAsFound(trimmed);
+        updateCounters();
+      }
+      out.textContent += SUPER_COMMANDS[key] + "\n";
+      scrollToBottom();
+      return;
+    }
+
+    out.textContent += cmdNotFound(trimmed);
     scrollToBottom();
-    return;
-  }
-
-  out.textContent += cmdNotFound(trimmed);
-  scrollToBottom();
-};
-
+  };
 
   // =========================
   // 8) START: boot typing -> prompt typing -> input enabled
@@ -306,12 +305,10 @@ const handleCommand = (raw) => {
   promptLabel.textContent = "";
   clearInput();
 
-  // Audio odblokuje się dopiero po interakcji usera (Chrome i Safari)
   document.addEventListener("pointerdown", () => ensureAudio(), { once: true });
 
   ensureAudio();
   printTypingToOut(bootText, 22, true, () => {
-    // teraz typingiem pokaż prompt
     setPromptVisible(true);
     promptLabel.textContent = "";
     typeIntoNode(promptLabel, "Waiting for Misia: ", 22, true, () => {
@@ -331,20 +328,18 @@ const handleCommand = (raw) => {
 
       handleCommand(raw);
 
-      // “nowy prompt”: wpisz go od razu (bez typingu) albo z typingu jak chcesz
+      // dolny prompt zostaje
       promptLabel.textContent = "Waiting for Misia: ";
       focusInput();
       return;
     }
 
-    // click sound przy wpisywaniu
     if (e.key.length === 1) {
       ensureAudio();
       clickSound();
     }
   });
 
-  // klik w terminal focusuje input
   terminalBody.addEventListener("pointerdown", () => {
     if (promptRow.style.display !== "none") focusInput();
   });
