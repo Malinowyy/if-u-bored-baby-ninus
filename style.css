@@ -726,8 +726,8 @@ body{
 /* Historia — podbity prompt "Waiting for Misia" */
 .page--story .terminal__promptLabel,
 .page--story .terminal__input{
-  font-size: 16px !important;          /* było ~15 */
-  color: #2bff6a !important;           /* jaśniejsza zieleń */
+  font-size: 18px !important;          /* było ~15 */
+  color: #33ff77 !important;
   font-weight: 500 !important;
 }
 
