@@ -19,7 +19,7 @@
   // 1) KONFIG: HASŁA + TEKSTY
   // =========================
   const NORMAL_COMMANDS = {
-    "haslo1":  "TU wpiszesz wiadomość dla haslo1\n",
+    "haslo1":  "test",
     "haslo2":  "TU wpiszesz wiadomość dla haslo2\n",
     "haslo3":  "...\n",
     "haslo4":  "...\n",
@@ -36,7 +36,7 @@
   };
 
   const SUPER_COMMANDS = {
-    "super1": "SUPER WIADOMOŚĆ 1 — wpisz swoją\n",
+    "super1": "nigga",
     "super2": "SUPER WIADOMOŚĆ 2 — wpisz swoją\n",
   };
 
