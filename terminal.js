@@ -18,80 +18,78 @@
     return;
   }
 
-// =========================
-// 1) KONFIG: SLOTY + ALIASY
-// =========================
+  // =========================
+  // 1) KONFIG: SLOTY + ALIASY
+  // =========================
 
-// Sloty (ID) -> wiadomość
-const NORMAL_SLOTS = {
-  haslo1: "Tu wpiszesz wiadomość dla haslo1\n",
-  haslo2: "TU wpiszesz wiadomość dla haslo2\n",
-  haslo3: "...\n",
-  haslo4: "...\n",
-  haslo5: "...\n",
-  haslo6: "...\n",
-  haslo7: "...\n",
-  haslo8: "...\n",
-  haslo9: "...\n",
-  haslo10: "...\n",
-  haslo11: "...\n",
-  haslo12: "...\n",
-  haslo13: "...\n",
-  haslo14: "...\n",
-};
+  // Sloty (ID) -> wiadomość
+  const NORMAL_SLOTS = {
+    haslo1: "Tu wpiszesz wiadomość dla haslo1\n",
+    haslo2: "TU wpiszesz wiadomość dla haslo2\n",
+    haslo3: "...\n",
+    haslo4: "...\n",
+    haslo5: "...\n",
+    haslo6: "...\n",
+    haslo7: "...\n",
+    haslo8: "...\n",
+    haslo9: "...\n",
+    haslo10: "...\n",
+    haslo11: "...\n",
+    haslo12: "...\n",
+    haslo13: "...\n",
+    haslo14: "...\n",
+  };
 
-const SUPER_SLOTS = {
-  super1: "SUPER_MESSAGE_1\n",
-  super2: "SUPER WIADOMOŚĆ 2 — wpisz swoją\n",
-};
+  const SUPER_SLOTS = {
+    super1: "SUPER_MESSAGE_1\n",
+    super2: "SUPER WIADOMOŚĆ 2 — wpisz swoją\n",
+  };
 
-// Co użytkownik wpisuje -> do którego slotu to należy
-// (tu ustawiasz “prawdziwe komendy”)
-const INPUT_TO_SLOT = {
-  // normalne:
-  "haslo1": "haslo1",
-  "haslo2": "haslo2",
-  "haslo3": "haslo3",
-  "haslo4": "haslo4",
-  "haslo5": "haslo5",
-  "haslo6": "haslo6",
-  "haslo7": "haslo7",
-  "haslo8": "haslo8",
-  "haslo9": "haslo9",
-  "haslo10": "haslo10",
-  "haslo11": "haslo11",
-  "haslo12": "haslo12",
-  "haslo13": "haslo13",
-  "haslo14": "haslo14",
+  // Co użytkownik wpisuje -> do którego slotu to należy
+  const INPUT_TO_SLOT = {
+    // normalne:
+    "haslo1": "haslo1",
+    "haslo2": "haslo2",
+    "haslo3": "haslo3",
+    "haslo4": "haslo4",
+    "haslo5": "haslo5",
+    "haslo6": "haslo6",
+    "haslo7": "haslo7",
+    "haslo8": "haslo8",
+    "haslo9": "haslo9",
+    "haslo10": "haslo10",
+    "haslo11": "haslo11",
+    "haslo12": "haslo12",
+    "haslo13": "haslo13",
+    "haslo14": "haslo14",
 
-  // super:
-  "super1": "super1",
-  "super2": "super2",
-};
+    // super:
+    "super1": "super1",
+    "super2": "super2",
+  };
 
-// Stałe pozycje w tabeli (0-based index)
-const SLOT_POSITION = {
-  haslo1: 0,
-  haslo2: 1,
-  haslo3: 2,
-  haslo4: 3,
-  haslo5: 4,
-  haslo6: 5,
-  haslo7: 6,
-  haslo8: 7,
-  haslo9: 8,
-  haslo10: 9,
-  haslo11: 10,
-  haslo12: 11,
-  haslo13: 12,
-  haslo14: 13,
-  super1: 14,
-  super2: 15,
-};
+  // Stałe pozycje w tabeli (0-based index)
+  const SLOT_POSITION = {
+    haslo1: 0,
+    haslo2: 1,
+    haslo3: 2,
+    haslo4: 3,
+    haslo5: 4,
+    haslo6: 5,
+    haslo7: 6,
+    haslo8: 7,
+    haslo9: 8,
+    haslo10: 9,
+    haslo11: 10,
+    haslo12: 11,
+    haslo13: 12,
+    haslo14: 13,
+    super1: 14,
+    super2: 15,
+  };
 
-const NORMAL_TOTAL = 14;
-const SUPER_TOTAL = 2;
-
+  const NORMAL_TOTAL = 14;
+  const SUPER_TOTAL = 2;
 
   // =========================
   // 2) STARTOWY TEKST (TYPING)
@@ -123,7 +121,6 @@ const SUPER_TOTAL = 2;
     if (!audioCtx) return;
     const t = audioCtx.currentTime;
 
-    // “thock”: krótki noise + delikatny lowpass
     const bufferSize = 0.06;
     const sampleRate = audioCtx.sampleRate;
     const buffer = audioCtx.createBuffer(1, Math.floor(sampleRate * bufferSize), sampleRate);
@@ -165,7 +162,7 @@ const SUPER_TOTAL = 2;
   const ENC_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%&*?";
 
   const tableRows = [];
-  const usedCommands = new Set();
+  const usedCommands = new Set(); // trzymamy SLOTY (np. "haslo5"), nie wpisane teksty
   const usedNormals = new Set();
   const usedSupers = new Set();
 
@@ -203,20 +200,19 @@ const SUPER_TOTAL = 2;
   for (let i = 0; i < TABLE_ROWS; i += 1) createRow();
 
   const lockRowAsFound = (rowIndex, commandText) => {
-  const rowObj = tableRows[rowIndex];
-  if (!rowObj || rowObj.locked) return;
+    const rowObj = tableRows[rowIndex];
+    if (!rowObj || rowObj.locked) return;
 
-  rowObj.locked = true;
+    rowObj.locked = true;
 
-  rowObj.leftTd.textContent = commandText;
-  rowObj.leftTd.classList.remove("cell-enc");
-  rowObj.leftTd.classList.add("cell-found");
+    rowObj.leftTd.textContent = commandText;
+    rowObj.leftTd.classList.remove("cell-enc");
+    rowObj.leftTd.classList.add("cell-found");
 
-  rowObj.rightTd.textContent = "FOUND!";
-  rowObj.rightTd.classList.remove("cell-notfound");
-  rowObj.rightTd.classList.add("cell-found");
-};
-
+    rowObj.rightTd.textContent = "FOUND!";
+    rowObj.rightTd.classList.remove("cell-notfound");
+    rowObj.rightTd.classList.add("cell-found");
+  };
 
   // =========================
   // 5) LICZNIKI
@@ -317,31 +313,36 @@ const SUPER_TOTAL = 2;
       return;
     }
 
-    if (Object.prototype.hasOwnProperty.call(NORMAL_COMMANDS, key)) {
-      if (!usedCommands.has(key)) {
-        usedCommands.add(key);
-        usedNormals.add(key);
-        const rowIndex = NORMAL_POSITIONS[key];
-        lockRowAsFound(rowIndex, trimmed);
-        updateCounters();
-      }
-      out.textContent += NORMAL_COMMANDS[key] + "\n";
-      scrollToBottom();
-      return;
-    }
+    // --- SLOT-BASED COMMAND RESOLUTION ---
+    const slot = INPUT_TO_SLOT[key];
 
-    if (Object.prototype.hasOwnProperty.call(SUPER_COMMANDS, key)) {
-      if (!usedCommands.has(key)) {
-        usedCommands.add(key);
-        usedSupers.add(key);
-        const rowIndex = SUPER_POSITIONS[key];
+    if (slot && Object.prototype.hasOwnProperty.call(SLOT_POSITION, slot)) {
+      const rowIndex = SLOT_POSITION[slot];
+
+      // odkrycie liczy się raz per slot
+      if (!usedCommands.has(slot)) {
+        usedCommands.add(slot);
+
+        if (Object.prototype.hasOwnProperty.call(NORMAL_SLOTS, slot)) usedNormals.add(slot);
+        if (Object.prototype.hasOwnProperty.call(SUPER_SLOTS, slot)) usedSupers.add(slot);
+
         lockRowAsFound(rowIndex, trimmed);
         updateCounters();
       }
-      out.textContent += SUPER_COMMANDS[key] + "\n";
+
+      // wypisz customową wiadomość
+      if (Object.prototype.hasOwnProperty.call(NORMAL_SLOTS, slot)) {
+        out.textContent += NORMAL_SLOTS[slot] + "\n";
+      } else if (Object.prototype.hasOwnProperty.call(SUPER_SLOTS, slot)) {
+        out.textContent += SUPER_SLOTS[slot] + "\n";
+      } else {
+        out.textContent += "\n\n";
+      }
+
       scrollToBottom();
       return;
     }
+    // --- END SLOT-BASED COMMAND RESOLUTION ---
 
     out.textContent += cmdNotFound(trimmed);
     scrollToBottom();
@@ -377,7 +378,6 @@ const SUPER_TOTAL = 2;
 
       handleCommand(raw);
 
-      // dolny prompt zostaje
       promptLabel.textContent = "Waiting for Misia: ";
       focusInput();
       return;
