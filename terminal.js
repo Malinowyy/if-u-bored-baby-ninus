@@ -23,7 +23,7 @@
   // =========================
   // UWAGA: klucze = to, co użytkownik wpisuje
   const NORMAL_COMMANDS = {
-    "haslo1": "test\n",
+    "nigger": "test\n",
     "haslo2": "TU wpiszesz wiadomość dla haslo2\n",
     "haslo3": "...\n",
     "haslo4": "...\n",
@@ -40,7 +40,7 @@
   };
 
   const SUPER_COMMANDS = {
-    "super1": "SUPER_MESSAGE_1\n", // <- wpisz tu swoją, nieobraźliwą treść
+    "gigga nigga": "SUPER_MESSAGE_1\n", // <- wpisz tu swoją, nieobraźliwą treść
     "super2": "SUPER WIADOMOŚĆ 2 — wpisz swoją\n",
   };
 
