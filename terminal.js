@@ -47,7 +47,7 @@
   // 2) STARTOWY TEKST (TYPING)
   // =========================
   const bootLines = [
-    "C:\\Users\\misiu> uruchom_historia.exe",
+    "C:\\Users\\misia> uruchom_historia.exe",
     "",
     "[OK] Ładowanie wspomnień...",
     "[OK] Synchronizacja spojrzeń...",
@@ -56,7 +56,7 @@
     "=> A potem nagle: hello.",
     "=> I jakoś już zostało.",
     "",
-    "C:\\Users\\misiu> "
+    "C:\\Users\\misia> "
   ];
   const bootText = bootLines.join("\n");
 
@@ -113,7 +113,7 @@
   // =========================
   const TABLE_ROWS = 16;
   const ENC_LEN = 7;
-  const ENC_INTERVAL_MS = 200;
+  const ENC_INTERVAL_MS = 50;
   const ENC_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%&*?";
 
   const tableRows = []; // { leftTd, rightTd, locked, intervalId }
@@ -227,7 +227,8 @@
     step();
   };
 
- const cmdNotFound = (raw) => `'${raw}' Command not found.\n\n`;
+const cmdNotFound = (raw) => `'${raw}' Command not found.\n\n`;
+
 
   const setPromptVisible = (visible) => {
     promptRow.style.display = visible ? "flex" : "none";
