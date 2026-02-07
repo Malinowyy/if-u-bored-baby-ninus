@@ -70,33 +70,50 @@
   };
 
   const clickSound = () => {
-    if (!audioCtx) return;
-    const t = audioCtx.currentTime;
+  if (!audioCtx) return;
+  const t = audioCtx.currentTime;
 
-    const osc = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
-    osc.type = "square";
+  // “thock”: krótki noise + delikatny lowpass
+  const bufferSize = 0.06; // sekundy
+  const sampleRate = audioCtx.sampleRate;
+  const buffer = audioCtx.createBuffer(1, Math.floor(sampleRate * bufferSize), sampleRate);
+  const data = buffer.getChannelData(0);
 
-    const f = 850 + Math.random() * 250;
-    osc.frequency.setValueAtTime(f, t);
+  // krótkie “kliknięcie” z szybkim opadaniem
+  for (let i = 0; i < data.length; i += 1) {
+    const x = i / data.length;
+    const env = Math.exp(-x * 18);               // szybki decay
+    data[i] = (Math.random() * 2 - 1) * env * 0.8;
+  }
 
-    gain.gain.setValueAtTime(0.0, t);
-    gain.gain.linearRampToValueAtTime(0.03, t + 0.005);
-    gain.gain.linearRampToValueAtTime(0.0, t + 0.035);
+  const src = audioCtx.createBufferSource();
+  src.buffer = buffer;
 
-    osc.connect(gain);
-    gain.connect(audioCtx.destination);
+  const filter = audioCtx.createBiquadFilter();
+  filter.type = "lowpass";
+  filter.frequency.setValueAtTime(1400, t);     // mniej pisków
+  filter.Q.setValueAtTime(0.7, t);
 
-    osc.start(t);
-    osc.stop(t + 0.05);
-  };
+  const gain = audioCtx.createGain();
+  gain.gain.setValueAtTime(0.0, t);
+  gain.gain.linearRampToValueAtTime(0.05, t + 0.002);
+  gain.gain.linearRampToValueAtTime(0.0, t + 0.06);
+
+  src.connect(filter);
+  filter.connect(gain);
+  gain.connect(audioCtx.destination);
+
+  src.start(t);
+  src.stop(t + 0.07);
+};
+
 
   // =========================
   // 4) TABELA 16x2 + “SZYFROWANIE”
   // =========================
   const TABLE_ROWS = 16;
   const ENC_LEN = 7;
-  const ENC_INTERVAL_MS = 400;
+  const ENC_INTERVAL_MS = 200;
   const ENC_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%&*?";
 
   const tableRows = []; // { leftTd, rightTd, locked, intervalId }
@@ -239,43 +256,50 @@
   // =========================
   // 7) COMMAND HANDLING
   // =========================
-  const handleCommand = (raw) => {
-    const trimmed = raw.trim();
-    const key = normalize(trimmed);
+  const normalize = (s) =>
+  s
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, " "); // spłaszcza białe znaki
 
-    // echo komendy jak w cmd: prompt + komenda w historii
-    out.textContent += `Waiting for Misia: ${trimmed}\n\n`;
-    scrollToBottom();
+const handleCommand = (raw) => {
+  const trimmed = raw.trim();
+  const key = normalize(trimmed);
 
-    if (key.length === 0) return;
+  // echo komendy
+  out.textContent += `Waiting for Misia: ${trimmed}\n\n`;
+  scrollToBottom();
 
-    if (Object.prototype.hasOwnProperty.call(NORMAL_COMMANDS, key)) {
-      if (!usedCommands.has(key)) {
-        usedCommands.add(key);
-        usedNormals.add(key);
-        lockNextRowAsFound(trimmed);
-        updateCounters();
-      }
-      out.textContent += NORMAL_COMMANDS[key] + "\n";
-      scrollToBottom();
-      return;
+  if (key.length === 0) return;
+
+  if (Object.prototype.hasOwnProperty.call(NORMAL_COMMANDS, key)) {
+    if (!usedCommands.has(key)) {
+      usedCommands.add(key);
+      usedNormals.add(key);
+      lockNextRowAsFound(trimmed);
+      updateCounters();
     }
-
-    if (Object.prototype.hasOwnProperty.call(SUPER_COMMANDS, key)) {
-      if (!usedCommands.has(key)) {
-        usedCommands.add(key);
-        usedSupers.add(key);
-        lockNextRowAsFound(trimmed);
-        updateCounters();
-      }
-      out.textContent += SUPER_COMMANDS[key] + "\n";
-      scrollToBottom();
-      return;
-    }
-
-    out.textContent += cmdNotFound(trimmed);
+    out.textContent += NORMAL_COMMANDS[key] + "\n\n";
     scrollToBottom();
-  };
+    return;
+  }
+
+  if (Object.prototype.hasOwnProperty.call(SUPER_COMMANDS, key)) {
+    if (!usedCommands.has(key)) {
+      usedCommands.add(key);
+      usedSupers.add(key);
+      lockNextRowAsFound(trimmed);
+      updateCounters();
+    }
+    out.textContent += SUPER_COMMANDS[key] + "\n\n";
+    scrollToBottom();
+    return;
+  }
+
+  out.textContent += cmdNotFound(trimmed);
+  scrollToBottom();
+};
+
 
   // =========================
   // 8) START: boot typing -> prompt typing -> input enabled
