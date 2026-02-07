@@ -21,17 +21,45 @@
   </header>
 
   <main class="content content--center">
-    <div class="terminal terminal--windows">
-  <div class="terminal__bar terminal__bar--windows">
-    C:\Users\misiu\cmd.exe
+  <div class="terminal terminal--windows" role="region" aria-label="Terminal">
+    <div class="terminal__bar terminal__bar--windows">C:\Users\misiu\cmd.exe</div>
+
+    <div class="terminal__body terminal__body--windows" id="terminalBody">
+      <pre class="terminal__scroll"><code id="terminalText"></code></pre>
+
+      <!-- prompt + input -->
+      <div class="terminal__promptRow" id="promptRow" aria-live="polite">
+        <span class="terminal__promptLabel" id="promptLabel">Waiting for Misia:&nbsp;</span>
+        <input id="terminalInput" class="terminal__input" type="text" autocomplete="off" spellcheck="false" />
+        <span class="terminal__caret" id="caret" aria-hidden="true"></span>
+      </div>
+    </div>
   </div>
 
-  <pre class="terminal__body terminal__body--windows">
-<code id="terminalText"></code><span class="cursor">_</span>
-  </pre>
-</div>
+  <!-- POD TERMINALEM: liczniki -->
+  <div class="below-terminal">
+    <div class="counters">
+      <div class="counter counter--left" id="normalCounter">Inside joke 0/14</div>
+      <div class="counter counter--right" id="superCounter">Super inside joke 0/2</div>
+    </div>
 
-  </main>
+    <!-- TABELA 16x2 -->
+    <div class="found-table-wrap">
+      <table class="found-table" aria-label="Found table">
+        <thead>
+          <tr>
+            <th>Encrypted</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="foundTableBody">
+          <!-- JS wypełni 16 wierszy -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+</main>
+
 
   <script src="main.js"></script>
   <script src="terminal.js"></script>
