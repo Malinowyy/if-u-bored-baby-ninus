@@ -46,6 +46,28 @@
 
   const NORMAL_TOTAL = 14;
   const SUPER_TOTAL = 2;
+// Stałe pozycje w tabeli (0-based index)
+  const NORMAL_POSITIONS = {
+    haslo1: 0,
+    haslo2: 1,
+    haslo3: 2,
+    haslo4: 3,
+    haslo5: 4,
+    haslo6: 5,
+    haslo7: 6,
+    haslo8: 7,
+    haslo9: 8,
+    haslo10: 9,
+    haslo11: 10,
+    haslo12: 11,
+    haslo13: 12,
+    haslo14: 13,
+  };
+  
+  const SUPER_POSITIONS = {
+    super1: 14,
+    super2: 15,
+  };
 
   // =========================
   // 2) STARTOWY TEKST (TYPING)
@@ -156,20 +178,21 @@
 
   for (let i = 0; i < TABLE_ROWS; i += 1) createRow();
 
-  const lockNextRowAsFound = (commandText) => {
-    const rowObj = tableRows.find(r => !r.locked);
-    if (!rowObj) return;
+  const lockRowAsFound = (rowIndex, commandText) => {
+  const rowObj = tableRows[rowIndex];
+  if (!rowObj || rowObj.locked) return;
 
-    rowObj.locked = true;
+  rowObj.locked = true;
 
-    rowObj.leftTd.textContent = commandText;
-    rowObj.leftTd.classList.remove("cell-enc");
-    rowObj.leftTd.classList.add("cell-found");
+  rowObj.leftTd.textContent = commandText;
+  rowObj.leftTd.classList.remove("cell-enc");
+  rowObj.leftTd.classList.add("cell-found");
 
-    rowObj.rightTd.textContent = "FOUND!";
-    rowObj.rightTd.classList.remove("cell-notfound");
-    rowObj.rightTd.classList.add("cell-found");
-  };
+  rowObj.rightTd.textContent = "FOUND!";
+  rowObj.rightTd.classList.remove("cell-notfound");
+  rowObj.rightTd.classList.add("cell-found");
+};
+
 
   // =========================
   // 5) LICZNIKI
@@ -274,7 +297,8 @@
       if (!usedCommands.has(key)) {
         usedCommands.add(key);
         usedNormals.add(key);
-        lockNextRowAsFound(trimmed);
+        const rowIndex = NORMAL_POSITIONS[key];
+        lockRowAsFound(rowIndex, trimmed);
         updateCounters();
       }
       out.textContent += NORMAL_COMMANDS[key] + "\n";
@@ -286,7 +310,8 @@
       if (!usedCommands.has(key)) {
         usedCommands.add(key);
         usedSupers.add(key);
-        lockNextRowAsFound(trimmed);
+        const rowIndex = SUPER_POSITIONS[key];
+        lockRowAsFound(rowIndex, trimmed);
         updateCounters();
       }
       out.textContent += SUPER_COMMANDS[key] + "\n";
