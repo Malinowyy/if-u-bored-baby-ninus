@@ -13,7 +13,8 @@ document.addEventListener("click", (e) => {
   const timeEl = document.getElementById("timeSince");
   if (!timeEl) return;
 
-  const start = new Date(2025, 8, 29, 18, 0, 0); // 8 = wrzesień (0-11)
+  const start = new Date(2025, 8, 29, 19, 25, 0);
+
   const pad2 = (n) => String(n).padStart(2, "0");
 
   const render = () => {
