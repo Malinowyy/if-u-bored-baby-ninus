@@ -584,3 +584,71 @@ body{
 .cell-notfound{
   color: rgba(255,255,255,.60);
 }
+/* ============================= */
+/* HISTORIA.HTML – FIX ONLY      */
+/* ============================= */
+
+/* Układ: terminal + sekcja pod nim w KOLUMNIE (nie obok) */
+.page--story .content--center{
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 18px;
+}
+
+/* Prompt typografia identyczna jak CMD */
+.page--story .terminal__promptRow{
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-top: 10px;
+
+  font-family: Consolas, "Lucida Console", "Courier New", monospace;
+  font-size: 15px;
+  line-height: 1.45;
+  color: #00ff57;
+}
+
+/* Label promptu też w tej samej typografii */
+.page--story .terminal__promptLabel{
+  font-family: Consolas, "Lucida Console", "Courier New", monospace;
+  font-size: 15px;
+  line-height: 1.45;
+  color: #00ff57;
+}
+
+/* Nadpisanie starego <input> (bo teraz używamy contenteditable span) */
+.page--story .terminal__input{
+  flex: 0 0 auto;          /* NIE rozpycha się na całą szerokość */
+  min-width: 12px;
+  max-width: 640px;
+  background: transparent;
+  border: none;
+  outline: none;
+
+  display: inline-block;
+  white-space: pre;        /* zachowuje spacje jak w terminalu */
+  color: #00ff57;
+
+  font-family: Consolas, "Lucida Console", "Courier New", monospace;
+  font-size: 15px;
+  line-height: 1.45;
+
+  caret-color: transparent; /* ukrywamy natywny kursor */
+}
+
+/* “Dioda” ma być zaraz za tekstem */
+.page--story .terminal__caret{
+  width: 9px;
+  height: 16px;
+  background: #00ff57;
+  display: inline-block;
+  animation: blink-cmd 1s steps(1) infinite;
+}
+
+/* Sekcja pod terminalem ma być faktycznie POD i równa szerokości terminala */
+.page--story .below-terminal{
+  width: min(900px, 100%);
+  margin-top: 0;
+}
+
