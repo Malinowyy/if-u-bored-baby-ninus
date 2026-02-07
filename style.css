@@ -463,3 +463,124 @@ body{
   50%{ opacity: 0; }
 }
 
+/* ============================= */
+/* TERMINAL INTERACTIVE + TABLE  */
+/* ============================= */
+
+.terminal__scroll{
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+.terminal__promptRow{
+  display:flex;
+  align-items:center;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.terminal__promptLabel{
+  color: #00ff57;
+  font-family: Consolas, "Lucida Console", "Courier New", monospace;
+  font-size: 15px;
+  line-height: 1.45;
+}
+
+.terminal__input{
+  flex: 1;
+  min-width: 120px;
+  background: transparent;
+  border: none;
+  outline: none;
+
+  color: #00ff57;
+  font-family: Consolas, "Lucida Console", "Courier New", monospace;
+  font-size: 15px;
+  line-height: 1.45;
+
+  caret-color: transparent; /* ukrywamy natywny kursor */
+}
+
+.terminal__caret{
+  width: 9px;
+  height: 16px;
+  background: #00ff57;
+  display:inline-block;
+  animation: blink-cmd 1s steps(1) infinite;
+}
+
+/* Pod terminalem */
+.below-terminal{
+  width: min(900px, 100%);
+  margin-top: 18px;
+}
+
+.counters{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap: 14px;
+}
+
+/* biała pogrubiona czcionka jak w topbarze, ale większa */
+.counter{
+  color: #fff;
+  font-weight: 900;
+  font-size: 22px;
+  letter-spacing: .2px;
+  text-shadow: 0 6px 20px rgba(0,0,0,.35);
+}
+
+/* tabela */
+.found-table-wrap{
+  margin-top: 14px;
+  display:flex;
+  justify-content:center;
+}
+
+.found-table{
+  width: 100%;
+  border-collapse: collapse;
+  background: rgba(0,0,0,.35);
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: 10px;
+  overflow:hidden;
+}
+
+.found-table thead th{
+  text-align:left;
+  padding: 12px 14px;
+  color: rgba(255,255,255,.85);
+  font-weight: 800;
+  font-size: 14px;
+  border-bottom: 1px solid rgba(255,255,255,.10);
+}
+
+.found-table tbody td{
+  padding: 10px 14px;
+  border-bottom: 1px solid rgba(255,255,255,.06);
+  font-family: Consolas, "Lucida Console", "Courier New", monospace;
+  font-size: 14px;
+}
+
+.found-table tbody tr:last-child td{
+  border-bottom: none;
+}
+
+.cell-enc{
+  color: rgba(255,255,255,.80);
+  letter-spacing: 1.8px;
+}
+
+.cell-status{
+  color: rgba(255,255,255,.65);
+}
+
+.cell-found{
+  color: #00ff57;
+  font-weight: 800;
+}
+
+.cell-notfound{
+  color: rgba(255,255,255,.60);
+}
