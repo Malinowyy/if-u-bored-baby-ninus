@@ -407,4 +407,59 @@ body{
   flex-wrap: nowrap;
   gap: 12px;
 }
+/* ============================= */
+/* WINDOWS CMD TERMINAL LOOK     */
+/* ============================= */
+
+.terminal--windows{
+  width: min(900px, 100%);
+  border-radius: 6px;
+  background: #000;
+  border: 1px solid #2a2a2a;
+  box-shadow: 0 18px 60px rgba(0,0,0,.75);
+}
+
+/* Pasek tytułu jak w Windows */
+.terminal__bar--windows{
+  height: 34px;
+  background: linear-gradient(#1e1e1e, #111);
+  color: #dcdcdc;
+  font-size: 13px;
+  font-family: Segoe UI, system-ui, sans-serif;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  border-bottom: 1px solid #000;
+  user-select: none;
+}
+
+/* Wnętrze CMD */
+.terminal__body--windows{
+  margin: 0;
+  padding: 16px 18px;
+  min-height: 340px;
+
+  background: #000;
+  color: #00ff57;
+
+  font-family: Consolas, "Lucida Console", "Courier New", monospace;
+  font-size: 15px;
+  line-height: 1.45;
+
+  white-space: pre-wrap;
+}
+
+/* Kursor jak w CMD */
+.terminal--windows .cursor{
+  display: inline-block;
+  width: 9px;
+  height: 16px;
+  background: #00ff57;
+  margin-left: 2px;
+  animation: blink-cmd 1s steps(1) infinite;
+}
+
+@keyframes blink-cmd{
+  50%{ opacity: 0; }
+}
 
