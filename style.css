@@ -697,4 +697,30 @@ body{
   opacity: 1 !important;
 }
 
+/* Historia: prompt ma być 1:1 jak tekst w <pre><code> */
+.page--story .terminal__promptRow,
+.page--story .terminal__promptRow *{
+  font-family: Consolas, "Lucida Console", "Courier New", monospace !important;
+  font-size: 15px !important;
+  line-height: 1.45 !important;
+  font-weight: 400 !important;
+  color: #00ff57 !important;
+  opacity: 1 !important;
+
+  /* te dwie rzeczy często robią “inną” optykę */
+  -webkit-font-smoothing: none !important;
+  font-smooth: never !important;
+  text-rendering: optimizeSpeed !important;
+}
+
+/* Prompt ma się zachowywać jak pre (baseline/spacing) */
+.page--story .terminal__promptRow{
+  white-space: pre !important;
+  margin-top: 10px !important;
+}
+
+/* Input (contenteditable) też jak pre */
+.page--story .terminal__input{
+  white-space: pre !important;
+}
 
