@@ -651,4 +651,40 @@ body{
   width: min(900px, 100%);
   margin-top: 0;
 }
+/* ============================= */
+/* HISTORIA – FIXES (DESKTOP TOO)*/
+/* ============================= */
+
+/* Wymuś kolumnę na historii zawsze */
+.page--story .content--center{
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 18px !important;
+}
+
+/* Prompt i input zawsze CMD font */
+.page--story .terminal__promptRow,
+.page--story .terminal__promptLabel,
+.page--story .terminal__input{
+  font-family: Consolas, "Lucida Console", "Courier New", monospace !important;
+  font-size: 15px !important;
+  line-height: 1.45 !important;
+}
+
+/* Najważniejsze: input NIE może być flex:1, bo wtedy caret ucieka na prawo */
+.page--story .terminal__input{
+  flex: 0 0 auto !important;
+  display: inline-block !important;
+  min-width: 12px !important;
+  max-width: 640px !important;
+  white-space: pre !important;
+}
+
+/* Sekcja pod terminalem ma być POD i mieć tę samą szerokość */
+.page--story .below-terminal{
+  width: min(900px, 100%) !important;
+  margin-top: 0 !important;
+}
+
 
