@@ -686,5 +686,15 @@ body{
   width: min(900px, 100%) !important;
   margin-top: 0 !important;
 }
+.page--story .terminal__promptRow,
+.page--story .terminal__promptLabel,
+.page--story .terminal__input{
+  color: #00ff57 !important;
+  font-family: Consolas, "Lucida Console", "Courier New", monospace !important;
+  font-size: 15px !important;
+  line-height: 1.45 !important;
+  font-weight: 400 !important;
+  opacity: 1 !important;
+}
 
 
