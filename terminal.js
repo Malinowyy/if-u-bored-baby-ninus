@@ -227,8 +227,7 @@
     step();
   };
 
-  const cmdNotFound = (raw) =>
-    `C:\Users\misiu> '${raw}' Command not found.\n\n`;
+ const cmdNotFound = (raw) => `'${raw}' Command not found.\n\n`;
 
   const setPromptVisible = (visible) => {
     promptRow.style.display = visible ? "flex" : "none";
@@ -265,7 +264,7 @@ const handleCommand = (raw) => {
   const key = normalize(trimmed);
 
   // echo komendy
-  out.textContent += `Waiting for Misia: ${trimmed}\n\n`;
+  out.textContent += `C:\\Users\\misiu> ${trimmed}\n\n`;
   scrollToBottom();
 
   if (key.length === 0) return;
