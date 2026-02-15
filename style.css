@@ -750,4 +750,13 @@ body{
   align-items:flex-start;
   gap:10px;
 }
+/* ================================= */
+/* GLOBALNY CLICK EFFECT (ALL BUTTONS) */
+/* ================================= */
+
+button:active,
+.btn:active,
+.topbar__homeBtn:active{
+  transform: scale(0.94) !important;
+}
 
