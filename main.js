@@ -67,7 +67,7 @@ document.addEventListener("click", (e) => {
   }
 
   let hugs = 0;
-  let busy = false;
+  
 
   const freezeToStart = () => {
     vid.pause();
@@ -87,18 +87,20 @@ document.addEventListener("click", (e) => {
   });
 
   btn.addEventListener("click", async () => {
-    if (busy) return;
-    busy = true;
-    btn.disabled = true;
+  // ++ licznik ZA KAŻDYM kliknięciem
+  hugs += 1;
+  counterEl.textContent = String(hugs);
 
-    try {
-      freezeToStart();
-      await vid.play();
-    } catch (err) {
-      busy = false;
-      btn.disabled = false;
-    }
-  });
+  try {
+    // reset filmu
+    vid.pause();
+    vid.currentTime = 0;
+
+    // odtwarzaj od nowa
+    await vid.play();
+  } catch (_) {}
+});
+
 
   freezeToStart();
 })();
