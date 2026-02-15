@@ -133,7 +133,7 @@
     "Checking who was right... [OK]",
     "",
     "Nasza historia jest - sama przyznasz - niezwykła.",
-    "Ale jak to dokładnie było?"
+    "Ale jak to dokładnie było?\n"
   ];
   const bootText = bootLines.join("\n");
 
