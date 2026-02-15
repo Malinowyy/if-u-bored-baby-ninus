@@ -221,18 +221,21 @@ body{
 
 .heart-time{
   position:absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -45%); /* lekko wyżej, wygląda naturalniej w sercu */
+  left:50%;
+  top:50%;
+  transform: translate(-50%, -45%);
+
   width: min(520px, 78vw);
   text-align:center;
-  padding: 16px 18px;
-  border-radius: 18px;
-  background: rgba(255,255,255,.90);
-  border: 1px solid rgba(0,0,0,.08);
-  box-shadow: var(--shadow);
-  backdrop-filter: blur(6px);
+
+  background: transparent;
+  border:none;
+  box-shadow:none;
+  padding:0;
+
+  animation: heartTextPulse 3s ease-in-out infinite;
 }
+
 .heart__path{
   fill: none;
   stroke: var(--red);
@@ -734,5 +737,11 @@ body{
 /* kursor też trochę jaśniejszy */
 .page--story .terminal__caret{
   background: #2bff6a !important;
+}
+@keyframes heartTextPulse {
+  0%   { transform: translate(-50%, -45%) scale(1); opacity: 0.95; }
+  20%  { transform: translate(-50%, -45%) scale(1.04); opacity: 1; }
+  40%  { transform: translate(-50%, -45%) scale(1); opacity: 0.95; }
+  100% { transform: translate(-50%, -45%) scale(1); opacity: 0.95; }
 }
 
