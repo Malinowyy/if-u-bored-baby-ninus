@@ -32,19 +32,19 @@
   // Sloty w kolejności w tabeli (po zmianach: merged maple/poniedziałek, usunięty sylwester, dodany całus/buziak)
   const SLOT_DEFS = [
     { id: "haslo1",  type: "normal", label: "Igrzyska śmierci w heliosie", msg: "To właśnie tu mam pierwsze wspomnienie z tobą.\n Przyszedłem do kina z nowo poznaną paczką przyjaciół. Pamiętam to zaspanie w tym kinie i szok, że ktoś mnie rozpoznał hahah.\n Kto by wtedy przypuszczał...\n" },
-    { id: "haslo2",  type: "normal", label: "Oaza w sandomierzu", msg: "Ah... Dla mnie tu zaczęła się nasza relacja.\n " },
+    { id: "haslo2",  type: "normal", label: "Oaza w sandomierzu", msg: "Ah... Dla mnie tu zaczęła się nasza relacja. \n Pamiętasz jak ganiało za tobą multum chłopaków? Albo jak za za Rokitą... To właśnie ta akcja zapoczątkowała naszą znajomość. \n To własnie był główny temat naszych pierwszych rozmów. A potem już poleciało.\n " },
     { id: "haslo3",  type: "normal", label: "Osiemnastka agaty", msg: "To było mocne haha. Jeszcze wtedy nie wiedziałem, że cię pokochałem, ale coś mnie do ciebie ciągnęło.\n Natomiast pamiętam, że już irytowała mnie obecność Antka obok ciebie i z jakiegoś powodu mu zazdrościłem. \n Nie zastanawiałem się nad tym jednak dłużej\n Pamiętam, jak się stresowałem, bo to przecież pierwsza osiemnastka na której byłem w życiu. \n I pamiętam jak mnie w tym wspierałaś...\n" },
     { id: "haslo4",  type: "normal", label: "KODA", msg: "Na oko - ze 3 miesiąc od zauroczenia się w tobie. Pierwszy od zakochania się.\n Z każdym dniem coraz mocniej uświadamiałem sobie, że odkochanie się nie będzie takie proste. Wszystko się nasilało, jak codziennie widzieliśmy się, modliliśmy się czy jedliśmy. \n Wtedy też pobiłem ścianę z tej frustracji, dlaczego jest tak a nie inaczej. I wtedy też dowiedziała się Aga. \n Pamiętam jak krytykowałem w głowie to, jak antek się zachowywał wokół ciebie. Jak (według, wtedy, mnie) miernie okazywał ci tę miłość. Gdybym tylko miał kiedyś szansę pokazać ci na jaką miłość zasługujesz...\n Ale pewnie nigdy się nie dowiesz. Nie wiem co by się musiało wydarzyć, żebyśmy byli razem...\n" },
     { id: "haslo5",  type: "normal", label: "Kałków oaza", msg: "Tutaj już powoli myślałem, że udało mi się odkochać. Wielki sukces! - no, tak starałem sobie wmawiać. Pseudo - związek z Julką uświadamiał mi jednak, jak bardzo ty jesteś wyjątkowa.\n Jak bardzo idealną dziewczyną jesteś. Jak bardzo nie chce już nikogo innego szukać, skoro poznałem ciebie. Pamiętam jak wmawiałem sobie, że aby ostatecznie zamknąć nasz rozdział, będzie wyznanie ci, że kiedyś się w tobie zakochałem.\n Nie mogłem powiedzieć przecież, ze to nadal aktualne, bo pewnie byś mnie zablokowała hahah. Ale liczyłem, że może wtedy tłumione emocje znajdą ujście.\n Popłąkałaś sie. \n A ja poczułem złość\n Jakim cudem nikt cię nie wspierał. Czemu zostałaś sama. Ogarnęła mnie złość. NIE ZASŁUŻYŁAŚ NA TO!!.\n Obiecałem sobie, że nie wtrącam się w twój ówczesny związek, bo kocham cię na tyle, że chce, żebyś była szczęśliwa. Nawet kosztem moich emocji. \nAle wtedy właśnie uświadomiłem sobie, że nie byłaś.\n" },
-    { id: "haslo6",  type: "normal", label: "The antek thing...", msg: "wiadomosc6\n" },
-    { id: "haslo7",  type: "normal", label: "Osiemnastka Maliny!", msg: "wiadomosc7\n" },
-    { id: "haslo8",  type: "normal", label: "Pierwszy raz u mnie na caaaały dzień!", msg: "wiadomosc8\n" },
-    { id: "haslo9",  type: "normal", label: "Bubbletea (mój pierwszy pretekst)", msg: "wiadomosc9\n" },
+    { id: "haslo6",  type: "normal", label: "The antek thing...", msg: "Też to pamiętam. Cały teń dzień.\n Już od paru dni byłaś zaaferowana. Bo on budował to napięcie. Byłem wtedy na siłowni. Pierwszy raz, na tej nowej w radomiu. \n Wysyłałaś głosówki. Płakałaś. A we mnie coraz więcej złości i współczucia. W końcu jechałem na rowerze do dziadka. Zadzwoniłaś. \n Rzuciłem rower na trawę i zacząłem chodzić po losowym polu w jedlance pocieszając cię i jednocześnie smucąc się z tobą. \n" },
+    { id: "haslo7",  type: "normal", label: "Osiemnastka Maliny!", msg: "Hahahah, pamiętam jak zacząłem sobie robić nadzieję na związek. 'Ale ona dopiero wszyła ze związku, musisz poczekać..' Mogłem. Ale nadal chciałem być coraz bliżej ciebie.\n Wika się śmiała, że jak się nie pocałujemy na tej imprezie, to ona nie wierzy w miłość haha. Pare osob wiedziało, że kocham cię od dawna. Pamiętam jak krzysiu Puścił sneaky careless whispera gdy byliśmy na parkiecie. \n Albo jak odganiał wszyskich od prezenciarni, gdy wiedział, że poszdłem tam z tobą, pokazać prezenty. Piękne wspomnienia.\n" },
+    { id: "haslo8",  type: "normal", label: "Pierwszy raz u mnie na caaaały dzień!", msg: "Ale się jarałem. Trochę jak spełnienie marzenia dziecka. Zdziwił mnie jednak fakt, że... Przy tobie wogole się nie stresowałem. \nNigdy nie potrafiłem rozmawiać z dziewczynami, które mi się podobały, żeby nie zchrzanić, a tu...\n  Z tobą było mi tak dobrze jak samemu. Nawet lepiej. Tak dobrze jak nigdy wcześniej. \n" },
+    { id: "haslo9",  type: "normal", label: "Bubbletea (mój pierwszy pretekst)", msg: "Pierwsze koty za płoty hahah. Jak po 18stce powiedziałem, że 'haha, mam kase to stawiam bubble tea' Sneaky peaky leaky. Pamiętasz jak szliśmy wybrać tapetę do twojego pokoju jedząc takisy??\n" },
 
     // SCALONE: maple leaf + pamiętny poniedziałek
-    { id: "haslo10", type: "normal", label: "Pewnego pamiętnego poniedziałku... Piosenka!", msg: "wiadomosc10\n" },
+    { id: "haslo10", type: "normal", label: "Pewnego pamiętnego poniedziałku... Piosenka!", msg: "Wróciliśmy ze szkoły animatora. Posiedziałem trochę u ciebie, drugi raz w życiu. Tata odebrał mnie, był na basenie akurat. Pierwszy raz mijałem park, idąc z polnej na warszawską. Wrociłem do domu i rozmarzony \n" },
 
-    { id: "haslo11", type: "normal", label: "Candle!", msg: "wiadomosc11\n" },
+    { id: "haslo11", type: "normal", label: "Candle!", msg: "Candle reminder!!\n" },
 
     // DODANE: całus/buziak
     { id: "haslo12", type: "normal", label: "Pierwszy pocałunek", msg: "wiadomosc12\n" },
@@ -247,8 +247,8 @@
   // 5) LICZNIKI + PERSIST
   // =========================
   const updateCounters = () => {
-    normalCounterEl.textContent = `Inside joke ${usedNormals.size}/${NORMAL_TOTAL}`;
-    superCounterEl.textContent = `Super inside joke ${usedSupers.size}/${SUPER_TOTAL}`;
+    normalCounterEl.textContent = `Canon event ${usedNormals.size}/${NORMAL_TOTAL}`;
+    superCounterEl.textContent = `Inside joke ${usedSupers.size}/${SUPER_TOTAL}`;
   };
 
   const loadFoundSlots = () => {
