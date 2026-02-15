@@ -11,7 +11,6 @@
   const superCounterEl = document.getElementById("superCounter");
   const tableBody = document.getElementById("foundTableBody");
 
-  // Przycisk resetu (dodaj w historia.html, ale JS zadziała nawet jeśli go nie ma)
   const resetBtn = document.getElementById("resetBtn");
 
   if (
@@ -28,80 +27,118 @@
   // 1) KONFIG: SLOTY + ALIASY
   // =========================
 
-  // Sloty (ID) -> wiadomość
-  const NORMAL_SLOTS = {
-    haslo1: "Wiadomość testowa elo\n",
-    haslo2: "Chyba działa ez\n",
-    haslo3: "...\n",
-    haslo4: "...\n",
-    haslo5: "...\n",
-    haslo6: "...\n",
-    haslo7: "...\n",
-    haslo8: "...\n",
-    haslo9: "...\n",
-    haslo10: "...\n",
-    haslo11: "...\n",
-    haslo12: "...\n",
-    haslo13: "...\n",
-    haslo14: "...\n",
-  };
-
-  const SUPER_SLOTS = {
-    super1: "XDDDDDDDDDD\n",
-    super2: "SUPER WIADOMOŚĆ 2 — wpisz swoją\n",
-  };
-
   // Komendy spoza tabeli/liczników (po odblokowaniu wszystkiego)
   const SPECIAL_COMMANDS = {
     "all done": "TU_WPISZ_WLASNA_WIADOMOSC_PO_ALL_DONE\n",
   };
 
-  // Co użytkownik wpisuje -> do którego slotu to należy
-  // PODMIEŃ aliasy na swoje hasła (bez obraźliwych słów).
-  const INPUT_TO_SLOT = {
-    // normalne:
-    "alias_haslo1": "haslo1",
-    "alias_haslo2": "haslo2",
-    "haslo3": "haslo3",
-    "haslo4": "haslo4",
-    "haslo5": "haslo5",
-    "haslo6": "haslo6",
-    "haslo7": "haslo7",
-    "haslo8": "haslo8",
-    "haslo9": "haslo9",
-    "haslo10": "haslo10",
-    "haslo11": "haslo11",
-    "haslo12": "haslo12",
-    "haslo13": "haslo13",
-    "haslo14": "haslo14",
+  // Definicje slotów w kolejności jak podałeś:
+  // - label: co ma być w tabeli
+  // - msg: co ma się wypisać w terminalu
+  // - type: "normal" lub "super"
+  const SLOT_DEFS = [
+    // 1
+    { id: "haslo1",  type: "normal", label: "Igrzyska śmierci w heliosie", msg: "wiadomosc1\n" },
+    // 2
+    { id: "haslo2",  type: "normal", label: "Oaza w sandomierzu", msg: "wiadomosc2\n" },
+    // 3
+    { id: "haslo3",  type: "normal", label: "Osiemnastka agaty", msg: "wiadomosc3\n" },
+    // 4
+    { id: "haslo4",  type: "normal", label: "KODA", msg: "wiadomosc4\n" },
+    // 5
+    { id: "haslo5",  type: "normal", label: "Kałków oaza", msg: "wiadomosc5\n" },
+    // 6
+    { id: "haslo6",  type: "normal", label: "The antek thing...", msg: "wiadomosc6\n" },
+    // 7
+    { id: "haslo7",  type: "normal", label: "Osiemnastka Maliny!", msg: "wiadomosc7\n" },
+    // 8
+    { id: "haslo8",  type: "normal", label: "Pierwszy raz u mnie na caaaały dzień!", msg: "wiadomosc8\n" },
+    // 9
+    { id: "haslo9",  type: "normal", label: "Bubbletea (mój pierwszy pretekst)", msg: "wiadomosc9\n" },
+    // 10
+    { id: "haslo10", type: "normal", label: "Piosenkaaa", msg: "wiadomosc10\n" },
+    // 11
+    { id: "haslo11", type: "normal", label: "Pewnego pamiętnego poniedziałku...", msg: "wiadomosc11\n" },
+    // 12
+    { id: "haslo12", type: "normal", label: "Candle!", msg: "wiadomosc12\n" },
+    // 13
+    { id: "haslo13", type: "normal", label: "Dziękuję! hahah", msg: "wiadomosc13\n" },
+    // 14
+    { id: "haslo14", type: "normal", label: "Bydgoszcz jeden", msg: "wiadomosc14\n" },
 
-    // super:
-    "alias_super1": "super1",
-    "super2": "super2",
-  };
+    // 15
+    { id: "haslo15", type: "normal", label: "Warszawa", msg: "wiadomosc15\n" },
+    // 16
+    { id: "haslo16", type: "normal", label: "No contact", msg: "wiadomosc16\n" },
+    // 17
+    { id: "haslo17", type: "normal", label: "Sylwester", msg: "wiadomosc17\n" },
+    // 18
+    { id: "haslo18", type: "normal", label: "Bydgoszcz dwa", msg: "wiadomosc18\n" },
 
-  // Stałe pozycje w tabeli (0-based index)
-  const SLOT_POSITION = {
-    haslo1: 0,
-    haslo2: 1,
-    haslo3: 2,
-    haslo4: 3,
-    haslo5: 4,
-    haslo6: 5,
-    haslo7: 6,
-    haslo8: 7,
-    haslo9: 8,
-    haslo10: 9,
-    haslo11: 10,
-    haslo12: 11,
-    haslo13: 12,
-    haslo14: 13,
-    super1: 14,
-    super2: 15,
-  };
+    // SUPER (2)
+    { id: "super1",  type: "super",  label: "Liseeek", msg: "wiadomosc19\n" },
+    { id: "super2",  type: "super",  label: "Kształcenie słuchu", msg: "wiadomosc20\n" },
+  ];
 
-  const NORMAL_TOTAL = 14;
-  const SUPER_TOTAL = 2;
+  // Alias listy (po ukośniku) -> ten sam slot
+  // Wpisuj tu tylko hasła/aliasy – mapowanie robi się automatycznie poniżej
+  const ALIASES = [
+    { slot: "haslo1",  words: ["kino", "igrzyska", "helios"] },
+    { slot: "haslo2",  words: ["sandomierz", "trójka", "trojka"] },
+    { slot: "haslo3",  words: ["agata", "osiemnastka agi"] },
+    { slot: "haslo4",  words: ["koda", "sciana", "ściana"] },
+    { slot: "haslo5",  words: ["kałków", "kalkow", "eremy", "oaza", "wakacje"] },
+    { slot: "haslo6",  words: ["antek", "rozstanie", "zerwanie"] },
+    { slot: "haslo7",  words: ["osiemnastka", "impreza"] },
+    { slot: "haslo8",  words: ["badminton", "lego", "kpop demon hunters", "jedlanka"] },
+    { slot: "haslo9",  words: ["bubble tea", "bubbletea", "radom", "wyjście", "wyjscie"] },
+    { slot: "haslo10", words: ["like a maple leaf", "piosenka", "maple leaf"] },
+    { slot: "haslo11", words: ["pamiętny poniedziałek", "pamietny poniedzialek", "poniedziałek", "poniedzialek"] },
+    { slot: "haslo12", words: ["candle"] },
+    { slot: "haslo13", words: ["kocham cię", "kocham cie", "dziekuje", "dziękuję"] },
+    { slot: "haslo14", words: ["bydgoszcz", "bydgoszcz jeden"] },
+
+    { slot: "haslo15", words: ["warszawa"] },
+    { slot: "haslo16", words: ["no contact"] },
+    { slot: "haslo17", words: ["sylwester"] },
+    { slot: "haslo18", words: ["bydgoszcz dwa"] },
+
+    // SUPER
+    { slot: "super1", words: ["lisek", "wiewiorka", "wiewiórka"] },
+    { slot: "super2", words: ["kształcenie słuchu", "ksztalcenie sluchu"] },
+  ];
+
+  // Szybkie mapy do użycia w kodzie
+  const SLOT_POSITION = {};
+  const SLOT_LABEL = {};
+  const SLOT_MSG = {};
+  const SLOT_TYPE = {};
+  for (let i = 0; i < SLOT_DEFS.length; i += 1) {
+    SLOT_POSITION[SLOT_DEFS[i].id] = i;     // stałe miejsce w tabeli
+    SLOT_LABEL[SLOT_DEFS[i].id] = SLOT_DEFS[i].label;
+    SLOT_MSG[SLOT_DEFS[i].id] = SLOT_DEFS[i].msg;
+    SLOT_TYPE[SLOT_DEFS[i].id] = SLOT_DEFS[i].type;
+  }
+
+  const NORMAL_TOTAL = SLOT_DEFS.filter(s => s.type === "normal").length;
+  const SUPER_TOTAL = SLOT_DEFS.filter(s => s.type === "super").length;
+
+  // normalize: lower + trim + collapse spaces + usuń polskie znaki (żeby aliasy działały w obu wersjach)
+  const normalize = (s) =>
+    s
+      .trim()
+      .toLowerCase()
+      .replace(/\s+/g, " ")
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "");
+
+  // INPUT -> SLOT (z aliasów)
+  const INPUT_TO_SLOT = {};
+  for (const item of ALIASES) {
+    for (const w of item.words) {
+      INPUT_TO_SLOT[normalize(w)] = item.slot;
+    }
+  }
 
   // =========================
   // 2) STARTOWY TEKST (TYPING)
@@ -114,8 +151,8 @@
     "Nina is always right",
     "Checking who was right... [OK]",
     "",
-    "Wszystko zaczęło się od pewnej huśtawki",
-    "tu bedzie jakis ladny wzruszajacy tekst"
+    "Nasza historia jest - sama przyznasz - niezwykła.",
+    "Ale jak to dokładnie było?"
   ];
   const bootText = bootLines.join("\n");
 
@@ -165,9 +202,9 @@
   };
 
   // =========================
-  // 4) TABELA 16x2 + “SZYFROWANIE”
+  // 4) TABELA + “SZYFROWANIE”
   // =========================
-  const TABLE_ROWS = 16;
+  const TABLE_ROWS = SLOT_DEFS.length;
   const ENC_LEN = 7;
   const ENC_INTERVAL_MS = 50;
   const ENC_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%&*?";
@@ -210,13 +247,13 @@
 
   for (let i = 0; i < TABLE_ROWS; i += 1) createRow();
 
-  const lockRowAsFound = (rowIndex, commandText) => {
+  const lockRowAsFound = (rowIndex, labelText) => {
     const rowObj = tableRows[rowIndex];
     if (!rowObj || rowObj.locked) return;
 
     rowObj.locked = true;
 
-    rowObj.leftTd.textContent = commandText;
+    rowObj.leftTd.textContent = labelText;
     rowObj.leftTd.classList.remove("cell-enc");
     rowObj.leftTd.classList.add("cell-found");
 
@@ -269,18 +306,17 @@
       if (!Object.prototype.hasOwnProperty.call(SLOT_POSITION, slot)) continue;
 
       const idx = SLOT_POSITION[slot];
-      lockRowAsFound(idx, slot);
+      lockRowAsFound(idx, SLOT_LABEL[slot] || slot);
 
       usedCommands.add(slot);
-      if (Object.prototype.hasOwnProperty.call(NORMAL_SLOTS, slot)) usedNormals.add(slot);
-      if (Object.prototype.hasOwnProperty.call(SUPER_SLOTS, slot)) usedSupers.add(slot);
+      if (SLOT_TYPE[slot] === "normal") usedNormals.add(slot);
+      if (SLOT_TYPE[slot] === "super") usedSupers.add(slot);
     }
 
     updateCounters();
     showResetIfUnlocked();
   };
 
-  // odtwórz progress od razu po zrobieniu tabeli
   restoreProgress();
 
   // =========================
@@ -356,11 +392,9 @@
   // =========================
   // 7) COMMAND HANDLING
   // =========================
-  const normalize = (s) =>
-    s.trim().toLowerCase().replace(/\s+/g, " ");
-
   const maybeUnlockAllDone = () => {
-    if (usedNormals.size === NORMAL_TOTAL && usedSupers.size === SUPER_TOTAL && !isAllDoneUnlocked()) {
+    const allFound = (usedNormals.size === NORMAL_TOTAL && usedSupers.size === SUPER_TOTAL);
+    if (allFound && !isAllDoneUnlocked()) {
       setAllDoneUnlocked();
       out.textContent += "Odblokowano komendę - 'all done'\n\n";
       scrollToBottom();
@@ -396,13 +430,14 @@
       if (!usedCommands.has(slot)) {
         usedCommands.add(slot);
 
-        if (Object.prototype.hasOwnProperty.call(NORMAL_SLOTS, slot)) usedNormals.add(slot);
-        if (Object.prototype.hasOwnProperty.call(SUPER_SLOTS, slot)) usedSupers.add(slot);
+        if (SLOT_TYPE[slot] === "normal") usedNormals.add(slot);
+        if (SLOT_TYPE[slot] === "super") usedSupers.add(slot);
 
-        lockRowAsFound(rowIndex, trimmed);
+        // do tabeli wstawiamy STAŁY label
+        lockRowAsFound(rowIndex, SLOT_LABEL[slot] || trimmed);
         updateCounters();
 
-        // PERSIST: zapisz znaleziony slot
+        // persist: zapis slotu
         const found = loadFoundSlots();
         if (!found.includes(slot)) {
           found.push(slot);
@@ -412,14 +447,8 @@
         maybeUnlockAllDone();
       }
 
-      if (Object.prototype.hasOwnProperty.call(NORMAL_SLOTS, slot)) {
-        out.textContent += NORMAL_SLOTS[slot] + "\n\n";
-      } else if (Object.prototype.hasOwnProperty.call(SUPER_SLOTS, slot)) {
-        out.textContent += SUPER_SLOTS[slot] + "\n\n";
-      } else {
-        out.textContent += "\n\n";
-      }
-
+      // terminal message
+      out.textContent += (SLOT_MSG[slot] || "\n") + "\n";
       scrollToBottom();
       return;
     }
