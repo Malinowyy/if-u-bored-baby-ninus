@@ -87,7 +87,7 @@
     { slot: "haslo17", words: ["bydgoszcz dwa", "swieta", "sylwester"] },
 
     // SUPER
-    { slot: "super1",  words: ["lisek", "wiewiorka", "wiewiórka"] },
+    { slot: "super1",  words: ["lisek", "wiewiorka", "wiewiórka", "misia"] },
     { slot: "super2",  words: ["kształcenie słuchu", "ksztalcenie sluchu"] },
   ];
 
