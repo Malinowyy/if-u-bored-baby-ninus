@@ -1,4 +1,6 @@
+
 // terminal.js
+let appMode = "terminal";
 (function () {
   const out = document.getElementById("terminalText");
   const input = document.getElementById("terminalInput");
@@ -386,11 +388,12 @@
   }
 
   // Komendy specjalne (po odblokowaniu)
-  if (isAllDoneUnlocked() && Object.prototype.hasOwnProperty.call(SPECIAL_COMMANDS, key)) {
-    out.textContent += SPECIAL_COMMANDS[key] + "\n\n";
-    scrollToBottom();
-    return;
-  }
+  if (isAllDoneUnlocked() && key === "all done") {
+  if (appMode !== "terminal") return;
+  startAllDoneSequence();
+  return;
+}
+
 
   // Sloty (tabela + liczniki)
   const slot = INPUT_TO_SLOT[key];
@@ -491,4 +494,179 @@
       location.reload();
     });
   }
+  function delay(ms) {
+  return new Promise(res => setTimeout(res, ms));
+}
+
+async function startAllDoneSequence() {
+  appMode = "countdown";
+  setPromptVisible(false);
+
+  // 1. wypisz wiadomość
+  out.textContent += SPECIAL_COMMANDS["all done"] + "\n";
+  scrollToBottom();
+
+  // 2. odliczanie
+  for (let i = 20; i >= 0; i--) {
+    out.textContent += i + "\n";
+    scrollToBottom();
+    await delay(1000);
+  }
+
+  // 3. glitch
+  appMode = "glitch";
+  const glitch = document.getElementById("glitchVideo");
+  glitch.classList.remove("hidden");
+  glitch.play();
+
+  await delay(2000);
+
+  glitch.pause();
+  glitch.classList.add("hidden");
+
+  // 4. wyczyść ekran
+  out.textContent = "";
+  document.getElementById("foundTableBody").innerHTML = "";
+
+  out.textContent = "SYSTEM ACCESS GRANTED\n";
+  await delay(2000);
+
+  out.textContent = "";
+  await delay(800);
+
+  // 5. admin intro
+  appMode = "adminQuiz";
+
+  const overlay = document.getElementById("adminOverlay");
+  const content = document.getElementById("adminContent");
+
+  overlay.classList.remove("hidden");
+
+  typeAdminText(content, [
+    "<admin> hmm i see what you are trying to do....",
+    "<admin> but i must check if you are worthy..."
+  ], () => {
+    startQuiz();
+  });
+}
+
+function typeAdminText(container, lines, done) {
+  container.innerHTML = "";
+  let i = 0;
+
+  function nextLine() {
+    if (i >= lines.length) {
+      done && done();
+      return;
+    }
+
+    const p = document.createElement("p");
+    container.appendChild(p);
+
+    typeIntoNode(p, lines[i], 25, true, () => {
+      i++;
+      setTimeout(nextLine, 500);
+    });
+  }
+
+  nextLine();
+}
+const quizData = [
+  {
+    img: "photo1.png",
+    question: "Gdzie zrobilismy to zdjecie?",
+    answer: "radom"
+  },
+  {
+    img: "photo2.png",
+    question: "W ktorym miesiacu zrobilismy to zdjecie?",
+    answer: "lipiec"
+  },
+  {
+    img: "photo3.png",
+    question: "Po jakim evencie zrobilismy to zdjecie?",
+    answer: "studniowka"
+  },
+  {
+    img: "photo4.png",
+    question: "Co bylo w pudelku?",
+    answer: "list"
+  }
+];
+
+let quizIndex = 0;
+
+function normalizeAnswer(s) {
+  return s
+    .trim()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+}
+
+function startQuiz() {
+  showQuizQuestion();
+}
+
+function showQuizQuestion() {
+  const overlay = document.getElementById("adminOverlay");
+  const content = document.getElementById("adminContent");
+
+  const q = quizData[quizIndex];
+
+  content.innerHTML = `
+    <img src="${q.img}">
+    <p>${q.question}</p>
+    <input id="quizInput" />
+    <div id="quizMsg"></div>
+  `;
+
+  const input = document.getElementById("quizInput");
+  const msg = document.getElementById("quizMsg");
+
+  input.focus();
+
+  input.addEventListener("keydown", function (e) {
+    if (e.key === "Enter") {
+      const val = normalizeAnswer(input.value);
+
+      if (val === q.answer) {
+        quizIndex++;
+
+        if (quizIndex >= quizData.length) {
+          showFinal();
+        } else {
+          showQuizQuestion();
+        }
+      } else {
+        msg.textContent = "Nie tak latwo...";
+      }
+    }
+  });
+}
+
+function showFinal() {
+  appMode = "final";
+
+  const content = document.getElementById("adminContent");
+
+  content.innerHTML = `
+    <img src="photo_final.png">
+    <p>Twoja wiadomosc tutaj</p>
+    <button id="authorBtn">Wiadomosc od autora</button>
+  `;
+
+  document.getElementById("authorBtn").onclick = () => {
+    content.innerHTML = `
+      <p>Tutaj twoja druga wiadomosc...</p>
+      <button id="resetAll">Resetuj</button>
+    `;
+
+    document.getElementById("resetAll").onclick = () => {
+      localStorage.clear();
+      location.reload();
+    };
+  };
+}
+
 })();
