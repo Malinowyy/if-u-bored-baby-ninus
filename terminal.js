@@ -520,7 +520,7 @@ Kocham cię! Do zobaczenia w przyszłych projektach — Twój informatyk &lt;3.
 
     adminContent.innerHTML = `
       <div style="text-align:center;">
-        <img src="zly.png" alt="ominous"
+        <img src="ominous.png" alt="ominous"
              style="max-width:min(720px,92vw); max-height:52vh; display:block; margin:0 auto 14px; border-radius:14px;">
         <div id="adminLines"
              style="max-width:min(820px,92vw); margin:0 auto; text-align:left;"></div>
