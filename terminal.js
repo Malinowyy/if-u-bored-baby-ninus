@@ -528,14 +528,14 @@ Kocham cię! Do zobaczenia w przyszłych projektach — Twój informatyk &lt;3.
     // 5) admin intro (wolniej) + pauza 7s + quiz
     appMode = "admin";
     if (!ensureOverlayVisible()) return;
-    content.innerHTML = `
-  <img src="ominous.png" class="admin-ominous">
-`;
+    
     const lines = [
       "<admin> Hmm I see what you are trying to do...",
       "<admin> But I must check if you are worthy...",
     ];
-    
+    content.innerHTML = `
+  <img src="ominous.png" class="admin-ominous">
+`;
     typeAdminLines(adminContent, lines, 5500, () => {
       quizIndex = 0;
       appMode = "adminQuiz";
