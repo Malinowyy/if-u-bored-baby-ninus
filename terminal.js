@@ -183,44 +183,22 @@ let appMode = "terminal";
     src.start(t);
     src.stop(t + 0.07);
   };
-  let alarmOsc = null;
-let alarmGain = null;
+ let alarmAudio = null;
 
 function startAlarm() {
-  ensureAudio();
-
-  const t = audioCtx.currentTime;
-
-  alarmOsc = audioCtx.createOscillator();
-  alarmGain = audioCtx.createGain();
-
-  alarmOsc.type = "sawtooth";
-  alarmOsc.frequency.setValueAtTime(110, t); // niski ton
-
-  // lekkie falowanie tonu
-  const lfo = audioCtx.createOscillator();
-  const lfoGain = audioCtx.createGain();
-  lfo.frequency.value = 0.6;
-  lfoGain.gain.value = 30;
-  lfo.connect(lfoGain);
-  lfoGain.connect(alarmOsc.frequency);
-  lfo.start();
-
-  alarmGain.gain.setValueAtTime(0.0001, t);
-  alarmGain.gain.exponentialRampToValueAtTime(0.05, t + 2);
-
-  alarmOsc.connect(alarmGain);
-  alarmGain.connect(audioCtx.destination);
-
-  alarmOsc.start();
+  if (!alarmAudio) {
+    alarmAudio = new Audio("alarm.mp3");
+    alarmAudio.loop = true;
+  }
+  alarmAudio.currentTime = 0;
+  alarmAudio.play();
 }
 
 function stopAlarm() {
-  if (!alarmOsc) return;
-  const t = audioCtx.currentTime;
-  alarmGain.gain.exponentialRampToValueAtTime(0.0001, t + 0.5);
-  alarmOsc.stop(t + 0.6);
-  alarmOsc = null;
+  if (alarmAudio) {
+    alarmAudio.pause();
+    alarmAudio.currentTime = 0;
+  }
 }
 
 
@@ -609,29 +587,9 @@ async function startAllDoneSequence() {
   nextLine();
 }
 
-}
 
-function typeAdminText(container, lines, done) {
-  container.innerHTML = "";
-  let i = 0;
 
-  function nextLine() {
-    if (i >= lines.length) {
-      done && done();
-      return;
-    }
 
-    const p = document.createElement("p");
-    container.appendChild(p);
-
-    typeIntoNode(p, lines[i], 25, true, () => {
-      i++;
-      setTimeout(nextLine, 500);
-    });
-  }
-
-  nextLine();
-}
 const quizData = [
   {
     img: "photo1.png",
