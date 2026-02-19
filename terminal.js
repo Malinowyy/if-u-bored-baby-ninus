@@ -28,7 +28,7 @@ let appMode = "terminal";
   // =========================
 
   const SPECIAL_COMMANDS = {
-    "all done": "Suspicious behaviour detected. Activating defense protocol... \n .\n. \n Informing THE ADMIN",
+    "all done": "Suspicious behaviour detected. Activating defense protocol... \n.\n. \nInforming... THE ADMIN",
   };
 
   // Sloty w kolejności w tabeli (po zmianach: merged maple/poniedziałek, usunięty sylwester, dodany całus/buziak)
@@ -570,7 +570,7 @@ async function startAllDoneSequence() {
   out.textContent = "";
   document.getElementById("foundTableBody").innerHTML = "";
 
-  out.textContent = "UNAUThORIZED ACCESS \n";
+  out.textContent = "UNAUTHORIZED ACCESS \n";
   await delay(2000);
 
   out.textContent = "";
