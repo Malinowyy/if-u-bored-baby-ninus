@@ -2,14 +2,17 @@
 <html lang="pl">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Nagroda</title>
-  <link rel="icon" type="image/png" href="/if-u-bored-baby-ninus/favicon.png">
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Nagroda 🎉</title>
+
+  <!-- favicon -->
+  <link rel="icon" type="image/png" href="favicon.png">
+
   <style>
     html, body {
       height: 100%;
       margin: 0;
-      background: #000;
+      background: #0b0b10;
       color: #fff;
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
     }
@@ -19,53 +22,61 @@
       align-items: center;
       justify-content: center;
       padding: 24px;
-      box-sizing: border-box;
-      text-align: center;
     }
     .card {
-      width: min(900px, 92vw);
+      width: min(820px, 94vw);
+      text-align: center;
+      padding: 18px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.06);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.35);
+      border: 1px solid rgba(255,255,255,0.12);
     }
     .gif {
       display: block;
-      margin: 0 auto;
-      max-width: min(720px, 92vw);
-      max-height: 60vh;
-      border-radius: 16px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+      margin: 0 auto 14px;
+      max-width: min(560px, 90vw);
+      max-height: 55vh;
+      border-radius: 14px;
     }
     .text {
-      margin-top: 18px;
-      font-size: 28px;
+      font-size: 32px;
       font-weight: 700;
-      letter-spacing: 0.3px;
+      letter-spacing: 0.2px;
+      margin-top: 6px;
     }
     .hint {
+      opacity: 0.75;
       margin-top: 10px;
-      opacity: 0.65;
-      font-size: 12px;
+      font-size: 13px;
     }
-    button {
-      margin-top: 18px;
+    #playBtn {
+      margin-top: 14px;
       padding: 10px 14px;
       border-radius: 999px;
       border: 0;
       cursor: pointer;
+      font-weight: 650;
     }
   </style>
 </head>
+
 <body>
   <div class="wrap">
     <div class="card">
-      <!-- Wklej tu link do gifa -->
-      <img class="gif" src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExdDgweXNhdnNkcDJxcTR2a2Zpcmw4cHZhZWhidXFhNmU4czBtaG5qciZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/KcW0iKgbONHUxzWrIF/giphy.gif" alt="GIF" />
+      <img class="gif"
+        src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExdDgweXNhdnNkcDJxcTR2a2Zpcmw4cHZhZWhidXFhNmU4czBtaG5qciZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/KcW0iKgbONHUxzWrIF/giphy.gif"
+        alt="GIF" />
 
       <div class="text">Gratulacjeee</div>
+      <div class="hint"></div>
 
-      
+      <button id="playBtn" type="button">Włącz muzykę 🎶</button>
+      <button id="stopBtn" type="button">Wyłącz muzykę 😠</button>
     </div>
   </div>
 
-  <audio id="partyAudio" src="party.mp3" loop></audio>
+  <audio id="partyAudio" src="party.mp3" loop preload="auto"></audio>
 
   <script>
     const audio = document.getElementById("partyAudio");
@@ -75,19 +86,37 @@
       try {
         audio.volume = 1.0;
         await audio.play();
+        // jeśli się udało, chowamy przycisk
+        if (btn) btn.style.display = "none";
+        cleanupAutoStart();
       } catch (e) {
-        // Autoplay może być zablokowany — wtedy user kliknie przycisk
+        // autoplay zablokowany – zostawiamy przycisk
       }
     }
 
-    // Spróbuj odpalić od razu
+    function cleanupAutoStart() {
+      window.removeEventListener("pointerdown", onFirstUserGesture);
+      window.removeEventListener("keydown", onFirstUserGesture);
+    }
+
+    function onFirstUserGesture() {
+      tryPlay();
+    }
+
+    // 1) spróbuj od razu (czasem przejdzie)
     tryPlay();
 
-    // I pozwól odpalić kliknięciem
-    btn.addEventListener("click", () => {
-      tryPlay();
-      btn.style.display = "none";
-    });
+    // 2) jak nie przejdzie, odpal przy pierwszym geście usera
+    window.addEventListener("pointerdown", onFirstUserGesture, { once: true });
+    window.addEventListener("keydown", onFirstUserGesture, { once: true });
+
+    // 3) i backup: przycisk
+    if (btn) {
+      btn.addEventListener("click", () => {
+        tryPlay();
+      });
+    }
   </script>
+  <div id="shameOverlay">Jak tak można</div>
 </body>
 </html>
