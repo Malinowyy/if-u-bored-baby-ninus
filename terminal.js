@@ -34,7 +34,7 @@ let appMode = "terminal";
 
   // ====== CONFIG ======
   const SPECIAL_COMMANDS = {
-    "all done": "Suspicious behaviour detected. Activating defense protocol...\n.\n.\nInforming THE ADMIN!\n",
+    "all done": "Suspicious behaviour detected. Activating defense protocol...\n\n\nInforming THE ADMIN!\n",
   };
 
   // Sloty w kolejności w tabeli
@@ -450,8 +450,21 @@ let appMode = "terminal";
       adminContent.innerHTML = `
         <div style="text-align:center; max-width: min(820px, 92vw);">
           <p style="white-space:pre-line;">
-Wow! Imponujące.
+Wow! Imponujące. Udało ci się przejść wszystkie moje próby...
+
+Nagroda będzie na ciebie czekać pod tym tekstem.
+
+Ta strona na początku miała być licznikiem czasu naczego związku od dokładnej godziny. 
+Potem wpadłem na pomysł napisania wiersza, a potem kilku drobnych wierszy. Jednak po drodze stwierdziłem,
+że ale fajnie by to zrobić w jakimś klimacie, padło na hacking. Powstał więc pomysł zgadywania haseł a potem
+i lekkiej fabuły/mini gierki. Natomiast bardzo przyjemnie mi się ją robiło i bardzo przyjemnie patrzyło się
+na twoje interakcje z nią. No, i w między czasie przytulasy tam na końcu haha.
 Kocham cię! Do zobaczenia w przyszłych projektach — Twój informatyk &lt;3.
+
+<a href="/if-u-bored-baby-ninus/nagroda.html"
+   style="display:inline-block; margin-top:14px; font-weight:700; text-decoration:underline; color:#7CFF7C;">
+super_nagroda_mega_wow
+</a>
           </p>
           <button id="resetAll" style="margin-top:12px; padding:10px 14px; border-radius:999px; border:0; cursor:pointer;">Resetuj wszystko</button>
         </div>
@@ -514,8 +527,8 @@ Kocham cię! Do zobaczenia w przyszłych projektach — Twój informatyk &lt;3.
     if (!ensureOverlayVisible()) return;
 
     const lines = [
-      "<admin> Hmm I see what you are trying to do...",
-      "<admin> But I must check if you are worthy...",
+      "<admin> Widzę, co próbujesz zrobić...",
+      "<admin> Ale najpierw musisz udowodnić, że jesteś godna tej wiedzy...",
     ];
 
     adminContent.innerHTML = `
