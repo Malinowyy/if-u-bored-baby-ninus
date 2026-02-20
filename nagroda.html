@@ -3,115 +3,161 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Nagroda 🎉</title>
+  <title>Nagroda</title>
 
-  <!-- favicon -->
-  <link rel="icon" type="image/png" href="favicon.png">
+  <!-- favicon (podmień na swój plik) -->
+  <link rel="icon" href="favicon.ico" />
 
   <style>
-  .btnRow{
-    display:flex;
-    gap:16px;
-    justify-content:center;
-    align-items:center;
-    margin-top:18px;
-    flex-wrap:wrap;
-  }
+    html, body { height: 100%; margin: 0; }
+    body{
+      background: radial-gradient(1200px 700px at 50% 20%, #1a2230 0%, #0a0f16 55%, #06080c 100%);
+      color: #fff;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      overflow: hidden;
+    }
 
-  .btn{
-    padding:12px 18px;
-    border-radius:999px;
-    border:0;
-    cursor:pointer;
-    font-weight:700;
-    font-size:18px;
-    line-height:1;
-    background:#ffffff;
-    color:#000;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.25);
-  }
+    .wrap{
+      min-height: 100%;
+      display: grid;
+      place-items: center;
+      padding: 28px 18px;
+    }
 
-  /* Drugi przycisk ma być „taki sam”, ale np. delikatnie inny */
-  .btn.secondary{
-    background: rgba(255,255,255,0.85);
-    border: 2px solid rgba(255,255,255,0.9);
-  }
+    .card{
+      width: min(900px, 94vw);
+      text-align: center;
+    }
 
-  /* Overlay na napis */
-  #flashMsg{
-    position: fixed;
-    inset: 0;
-    display: none;            /* ważne */
-    align-items: center;
-    justify-content: center;
-    z-index: 99999;           /* ważne */
-    background: rgba(0,0,0,0.65);
-    color: #fff;
-    font-size: clamp(34px, 6vw, 72px);
-    font-weight: 800;
-    text-align: center;
-    padding: 24px;
-  }
-</style>
+    h1{
+      margin: 0 0 18px;
+      font-size: clamp(34px, 6vw, 64px);
+      font-weight: 900;
+      letter-spacing: 0.5px;
+      text-shadow: 0 10px 30px rgba(0,0,0,0.45);
+    }
+
+    .gif{
+      max-width: min(820px, 92vw);
+      max-height: 52vh;
+      width: auto;
+      height: auto;
+      border-radius: 18px;
+      box-shadow: 0 18px 60px rgba(0,0,0,0.45);
+      display: block;
+      margin: 0 auto 18px;
+    }
+
+    .btnRow{
+      display:flex;
+      gap:14px;
+      justify-content:center;
+      align-items:center;
+      flex-wrap:wrap;
+      margin-top: 12px;
+    }
+
+    .btn{
+      padding: 12px 18px;
+      border-radius: 999px;
+      border: 0;
+      cursor: pointer;
+      font-weight: 800;
+      font-size: 18px;
+      background: rgba(255,255,255,0.95);
+      color: #000;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+      transition: transform 120ms ease, filter 120ms ease;
+      user-select: none;
+    }
+    .btn:active{ transform: scale(0.98); }
+
+    .btn.secondary{
+      background: rgba(255,255,255,0.85);
+      border: 2px solid rgba(255,255,255,0.9);
+    }
+
+    /* Overlay “Jak tak można” */
+    #flashMsg{
+      position: fixed;
+      inset: 0;
+      display: none; /* będzie włączane w JS */
+      align-items: center;
+      justify-content: center;
+      z-index: 99999;
+      background: rgba(0,0,0,0.72);
+      color: #fff;
+      font-size: clamp(34px, 6vw, 80px);
+      font-weight: 900;
+      text-align: center;
+      padding: 24px;
+      text-shadow: 0 18px 60px rgba(0,0,0,0.65);
+    }
+  </style>
 </head>
 
 <body>
   <div class="wrap">
     <div class="card">
+      <h1>Gratulacjeee</h1>
+
       <img class="gif"
         src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExdDgweXNhdnNkcDJxcTR2a2Zpcmw4cHZhZWhidXFhNmU4czBtaG5qciZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/KcW0iKgbONHUxzWrIF/giphy.gif"
-        alt="GIF" />
+        alt="GIF"
+      />
 
-      <div class="text">Gratulacjeee</div>
-      <div class="hint"></div>
-<div class="btnRow">
-  <button id="playBtn" class="btn">Włącz muzykę 🎶</button>
-  <button id="stopBtn" class="btn secondary">Wyłącz muzykę 😠</button>
-</div>
-
-<div id="flashMsg">Jak tak można</div>
+      <div class="btnRow">
+        <button id="playBtn" class="btn">Włącz muzykę 🎶</button>
+        <button id="stopBtn" class="btn secondary">Wyłącz muzykę 😠</button>
+      </div>
     </div>
   </div>
+
+  <div id="flashMsg">Jak tak można</div>
 
   <audio id="partyAudio" src="party.mp3" loop preload="auto"></audio>
 
   <script>
-  const audio = document.getElementById("partyAudio");
-  const playBtn = document.getElementById("playBtn");
-  const stopBtn = document.getElementById("stopBtn");
-  const flashMsg = document.getElementById("flashMsg");
+    const audio = document.getElementById("partyAudio");
+    const playBtn = document.getElementById("playBtn");
+    const stopBtn = document.getElementById("stopBtn");
+    const flashMsg = document.getElementById("flashMsg");
 
-  async function tryPlay() {
-    try {
-      audio.volume = 1.0;
-      await audio.play();
-    } catch (e) {
-      // autoplay może być zablokowany - wtedy klik playBtn zadziała
+    let flashTimer = null;
+
+    async function tryPlay() {
+      try {
+        audio.volume = 1.0;
+        await audio.play();
+      } catch (e) {
+        // Autoplay może być zablokowany bez interakcji usera.
+      }
     }
-  }
 
-  // Klik „Włącz muzykę”
-  playBtn.addEventListener("click", async () => {
-    await tryPlay();
-    playBtn.style.display = "none";
-  });
+    function showJakTakMozna() {
+      // reset jak klikniesz kilka razy z rzędu
+      if (flashTimer) clearTimeout(flashTimer);
 
-  // Klik „Wyłącz muzykę”
-  stopBtn.addEventListener("click", () => {
-    // muzyka MA SIĘ NIE wyłączać (jak pisałeś) ✅
-    // drugi przycisk znika ✅
-    stopBtn.style.display = "none";
+      flashMsg.style.display = "flex";
+      flashTimer = setTimeout(() => {
+        flashMsg.style.display = "none";
+        flashTimer = null;
+      }, 1000);
+    }
 
-    // pokaż napis na 1 sekundę ✅
-    flashMsg.style.display = "flex";
-    setTimeout(() => {
-      flashMsg.style.display = "none";
-    }, 1000);
-  });
+    // Włącz muzykę (próbuje odpalić)
+    playBtn.addEventListener("click", () => {
+      tryPlay();
+    });
 
-  // Spróbuj odpalić od razu (może nie przejść bez interakcji)
-  tryPlay();
-</script>
-  
+    // “Wyłącz muzykę” -> NIE wyłączamy muzyki, tylko napis na 1s, i ma działać ZA KAŻDYM RAZEM
+    stopBtn.addEventListener("click", () => {
+      showJakTakMozna();
+      // muzyka celowo zostaje
+    });
+
+    // Opcjonalnie: spróbuj autoplay (może nie przejść)
+    tryPlay();
+  </script>
 </body>
 </html>
