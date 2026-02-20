@@ -351,7 +351,7 @@ let appMode = "terminal";
   // ====== ADMIN + QUIZ ======
   const quizData = [
     { img: "photo1.png", question: "Gdzie zrobilismy to zdjecie? (miasto)", answer: "warszawa" },
-    { img: "photo2.png", question: "W ktorym miesiacu zrobilismy to zdjecie?", answer: "pazdziernik" },
+    { img: "photo2.png", question: "W ktorym miesiacu zrobilismy to zdjecie?", answer: "listopad" },
     { img: "photo3.png", question: "Po jakim evencie zrobilismy to zdjecie?", answer: "szkola animatora" },
     { img: "photo4.png", question: "Co bylo w pudelku?", answer: "charms" },
   ];
