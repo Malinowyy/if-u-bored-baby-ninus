@@ -852,3 +852,23 @@ button:active,
   /* aktywny format — zostawiamy Twój primary */
   border-color: transparent;
 }
+/* ===== FORMAT BUTTONS (pod sercem) ===== */
+
+/* stan NIEAKTYWNY */
+.heart-time__formats .btn {
+  background: rgba(224, 0, 0, 0.06);   /* delikatnie szare/czerwone */
+  border: 1px solid rgba(220, 0, 0, 0.25);
+  color: #e00000;                      /* czerwony napis */
+}
+
+/* hover dla nieaktywnego */
+.heart-time__formats .btn:hover {
+  background: rgba(220, 0, 0, 0.14);
+}
+
+/* stan AKTYWNY — zostaje Twój primary */
+.heart-time__formats .btn.btn--primary {
+  background: #e00000;
+  color: #fff;
+  border-color: transparent;
+}
