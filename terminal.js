@@ -463,9 +463,9 @@ Nagroda będzie na ciebie czekać pod tym tekstem.
 
 Ta strona na początku miała być licznikiem czasu naczego związku od dokładnej godziny. 
 Potem wpadłem na pomysł napisania wiersza, a potem kilku drobnych wierszy. Jednak po drodze stwierdziłem,
-że ale fajnie by to zrobić w jakimś klimacie, padło na hacking. Powstał więc pomysł zgadywania haseł a potem
+że fajnie by to zrobić w jakimś klimacie, padło na hacking. Powstał więc pomysł zgadywania haseł a potem
 i lekkiej fabuły/mini gierki. Natomiast bardzo przyjemnie mi się ją robiło i bardzo przyjemnie patrzyło się
-na twoje interakcje z nią. No, i w między czasie przytulasy tam na końcu haha.
+na twoje interakcje z nią. 
 Kocham cię! Do zobaczenia w przyszłych projektach — Twój informatyk &lt;3.
 
 <a href="/if-u-bored-baby-ninus/nagroda.html"
@@ -497,7 +497,7 @@ super_nagroda_mega_wow
     scrollToBottom();
 
     startAlarm();
-    for (let i = 20; i >= 0; i -= 1) {
+    for (let i = 10; i >= 0; i -= 1) {
       out.textContent += String(i) + "\n";
       scrollToBottom();
       await delay(1000);
