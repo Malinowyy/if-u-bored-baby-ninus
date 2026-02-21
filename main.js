@@ -43,15 +43,49 @@ document.addEventListener("click", (e) => {
   window.setInterval(render, 250);
 })();
 
-// Free hugs: lokalny hug.mp4, play raz, freeze na pierwszej klatce, licznik
+
+// Free hugs: lokalny hug.mp4, play raz, freeze na pierwszej klatce, licznik (cookies) + reset
 (function () {
   const vid = document.getElementById("hugVid");
   const btn = document.getElementById("hugPlayBtn");
   const counterEl = document.getElementById("hugCount");
+  const resetBtn = document.getElementById("hugResetBtn");
   if (!vid || !btn || !counterEl) return;
 
   const VIDEO_SRC = "hug.mp4"; // lokalny plik w repo
+  const COOKIE_KEY = "hugCount";
+  const COOKIE_DAYS = 365;
 
+  // --- cookies helpers ---
+  function setCookie(name, value, days) {
+    const d = new Date();
+    d.setTime(d.getTime() + days * 24 * 60 * 60 * 1000);
+    const expires = "expires=" + d.toUTCString();
+    document.cookie = `${name}=${encodeURIComponent(String(value))}; ${expires}; path=/; SameSite=Lax`;
+  }
+
+  function getCookie(name) {
+    const prefix = name + "=";
+    const parts = document.cookie.split(";").map(s => s.trim());
+    for (const p of parts) {
+      if (p.startsWith(prefix)) {
+        return decodeURIComponent(p.substring(prefix.length));
+      }
+    }
+    return null;
+  }
+
+  function deleteCookie(name) {
+    document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; SameSite=Lax`;
+  }
+
+  function readHugsFromCookie() {
+    const raw = getCookie(COOKIE_KEY);
+    const n = parseInt(raw || "0", 10);
+    return Number.isFinite(n) && n >= 0 ? n : 0;
+  }
+
+  // --- video setup ---
   vid.muted = true;
   vid.loop = false;
   vid.playsInline = true;
@@ -66,8 +100,10 @@ document.addEventListener("click", (e) => {
     vid.appendChild(src);
   }
 
-  let hugs = 0;
-  
+  let hugs = readHugsFromCookie();
+  counterEl.textContent = String(hugs);
+
+  let busy = false;
 
   const freezeToStart = () => {
     vid.pause();
@@ -79,28 +115,41 @@ document.addEventListener("click", (e) => {
   });
 
   vid.addEventListener("ended", () => {
-    
-    counterEl.textContent = String(hugs);
     freezeToStart();
     busy = false;
     btn.disabled = false;
   });
 
   btn.addEventListener("click", async () => {
-  // ++ licznik ZA KAŻDYM kliknięciem
-  hugs += 1;
-  counterEl.textContent = String(hugs);
+    if (busy) return;
+    busy = true;
+    btn.disabled = true;
 
-  try {
-    // reset filmu
-    vid.pause();
-    vid.currentTime = 0;
+    // ++ licznik ZA KAŻDYM kliknięciem
+    hugs += 1;
+    counterEl.textContent = String(hugs);
+    setCookie(COOKIE_KEY, hugs, COOKIE_DAYS);
 
-    // odtwarzaj od nowa
-    await vid.play();
-  } catch (_) {}
-});
+    try {
+      vid.pause();
+      vid.currentTime = 0;
+      await vid.play();
+    } catch (_) {
+      busy = false;
+      btn.disabled = false;
+    }
+  });
 
+  // Reset przyciskiem (jeśli istnieje)
+  if (resetBtn) {
+    resetBtn.addEventListener("click", () => {
+      hugs = 0;
+      counterEl.textContent = "0";
+      setCookie(COOKIE_KEY, 0, COOKIE_DAYS);
+      // ewentualnie zamiast setCookie możesz całkiem usunąć:
+      // deleteCookie(COOKIE_KEY);
+    });
+  }
 
   freezeToStart();
 })();
