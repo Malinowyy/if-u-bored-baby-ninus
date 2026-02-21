@@ -836,7 +836,8 @@ button:active,
   visibility: visible !important;
   color: #000 !important;
   background: #fff !important;
-  border: 2px solid rgba(0,0,0,0.15) !
+  border: 2px solid rgba(0,0,0,0.15) !important;
+}
 /* ZEGAR: przyciski formatu pod sercem */
 /* ===== FORMAT BUTTONS POD SERCEM ===== */
 
