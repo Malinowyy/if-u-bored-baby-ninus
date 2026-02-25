@@ -1151,3 +1151,32 @@ button:active,
     transition: left 180ms cubic-bezier(.2, 1.6, .2, 1);
   }
 }
+function resizeCanvasForDPR(canvas) {
+  if (!canvas) return;
+  const rect = canvas.getBoundingClientRect();
+  const dpr = window.devicePixelRatio || 1;
+
+  const w = Math.max(1, Math.round(rect.width * dpr));
+  const h = Math.max(1, Math.round(rect.height * dpr));
+
+  if (canvas.width !== w || canvas.height !== h) {
+    canvas.width = w;
+    canvas.height = h;
+  }
+
+  const ctx = canvas.getContext("2d");
+  if (ctx) ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
+// przykład:
+const slotCanvas = document.getElementById("slotCanvas");
+window.addEventListener("resize", () => {
+  resizeCanvasForDPR(slotCanvas);
+  // ewentualnie: redraw();
+});
+window.addEventListener("orientationchange", () => {
+  setTimeout(() => {
+    resizeCanvasForDPR(slotCanvas);
+    // redraw();
+  }, 150);
+});
