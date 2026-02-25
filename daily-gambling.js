@@ -1,8 +1,10 @@
 (() => {
-  const WIN_RATE = 0.03;
+  const WIN_RATE = 0.1;
 
   const WORDS = [
-    "kocham", "ciebie", "misiu", "nina", "patryk"
+    "kocham", "ciebie", "misiu", "nina", "patryk", "przytulas", "buziak", "kino", "helios", "oaza",
+    "sandomierz", "agata", "koda", "kalkow", "antek", "bubbletea", "maple", "piosenka", "candle", "warszawa",
+    "bydgoszcz", "studia", "arcane", "dworzec", "cam", "lego", "badminton", "lisek", "charms", "ninus"
   ];
 
   const reels = [
@@ -18,35 +20,19 @@
   const state = {
     spinning: false,
     dragActive: false,
-    dragStartPos: 0,
-    knobStartPos: 0,
+    dragStart: 0,
+    knobStart: 0,
     reelStates: [],
     rowHeight: 70,
     winFlashTimer: null
   };
 
-  // =========================
-  // Helpers
-  // =========================
+  // ---------- helpers ----------
   const randInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
   const randomWord = () => WORDS[randInt(0, WORDS.length - 1)];
-
-  function randomTriple() {
-    return [randomWord(), randomWord(), randomWord()];
-  }
-
-  function sleep(ms) {
-    return new Promise(res => setTimeout(res, ms));
-  }
-
-  function nextFrame() {
-    return new Promise(res => requestAnimationFrame(() => res()));
-  }
-
-  function forceReflow(el) {
-    // wymusza przeliczenie layoutu przed startem transition
-    void el.offsetHeight;
-  }
+  const randomTriple = () => [randomWord(), randomWord(), randomWord()];
+  const nextFrame = () => new Promise(r => requestAnimationFrame(() => r()));
+  const forceReflow = (el) => { void el.offsetHeight; };
 
   function waitTransition(el, fallbackMs) {
     return new Promise((resolve) => {
@@ -71,11 +57,7 @@
   }
 
   function showWinFlash() {
-    if (state.winFlashTimer) {
-      clearTimeout(state.winFlashTimer);
-      state.winFlashTimer = null;
-    }
-
+    if (state.winFlashTimer) clearTimeout(state.winFlashTimer);
     winOverlay.classList.remove("hidden");
     state.winFlashTimer = window.setTimeout(() => {
       winOverlay.classList.add("hidden");
@@ -83,9 +65,7 @@
     }, 1000);
   }
 
-  // =========================
-  // Reel DOM / render
-  // =========================
+  // ---------- reel DOM ----------
   function buildReelDOM(reelEl) {
     reelEl.innerHTML = `
       <div class="reel-viewport">
@@ -93,8 +73,28 @@
         <div class="reel-centerline"></div>
       </div>
     `;
+
+    const viewport = reelEl.querySelector(".reel-viewport");
     const track = reelEl.querySelector(".reel-track");
+    const center = reelEl.querySelector(".reel-centerline");
+
+    // KLUCZ: wymuszamy stacking / clipping niezależnie od CSS
+    viewport.style.overflow = "hidden";
+    viewport.style.position = "relative";
+    viewport.style.isolation = "isolate";
+
+    // Tekst NAD dekoracjami
+    track.style.position = "relative";
+    track.style.zIndex = "99";
     track.style.willChange = "transform";
+
+    if (center) {
+      center.style.position = "absolute";
+      center.style.inset = "0";
+      center.style.zIndex = "98";
+      center.style.pointerEvents = "none";
+    }
+
     return track;
   }
 
@@ -111,17 +111,10 @@
   }
 
   function measureRowHeight() {
-    // bierzemy realną wysokość komórki z DOM (ważne na mobile)
-    const firstTrack = state.reelStates[0] && state.reelStates[0].trackEl;
-    if (!firstTrack) return;
-
-    const firstCell = firstTrack.querySelector(".reel-cell");
-    if (!firstCell) return;
-
-    const h = firstCell.getBoundingClientRect().height;
-    if (Number.isFinite(h) && h > 10) {
-      state.rowHeight = h;
-    }
+    const first = state.reelStates[0]?.trackEl?.querySelector(".reel-cell");
+    if (!first) return;
+    const h = first.getBoundingClientRect().height;
+    if (Number.isFinite(h) && h > 10) state.rowHeight = h;
   }
 
   function setReelToTriple(reelState, triple) {
@@ -131,11 +124,8 @@
   }
 
   function buildSpinSequence(startTriple, endTriple, extraSteps) {
-    // start -> sporo losowych -> end
     const seq = [...startTriple];
-    for (let i = 0; i < extraSteps; i += 1) {
-      seq.push(randomWord());
-    }
+    for (let i = 0; i < extraSteps; i += 1) seq.push(randomWord());
     seq.push(...endTriple);
     return seq;
   }
@@ -147,10 +137,9 @@
     setTrackWords(reelState.trackEl, sequence);
     setTrackPosition(reelState.trackEl, 0, false);
 
-    // przelicz row height po zbudowaniu tracka
+    await nextFrame();
     measureRowHeight();
 
-    // wymuś layout zanim odpalimy transition
     forceReflow(reelState.trackEl);
     await nextFrame();
 
@@ -159,36 +148,25 @@
 
     await waitTransition(reelState.trackEl, durationMs + 300);
 
-    // Normalize (czyścimy DOM po spinie)
     setReelToTriple(reelState, endTriple);
   }
 
-  // =========================
-  // Outcome logic (3% win)
-  // =========================
+  // ---------- outcome (3% win) ----------
   function chooseOutcome() {
     const isWin = Math.random() < WIN_RATE;
 
     if (isWin) {
       const winWord = randomWord();
-
-      const triples = [0, 1, 2].map(() => {
-        const top = randomWord();
-        const mid = winWord;
-        const bottom = randomWord();
-        return [top, mid, bottom];
-      });
-
+      const triples = [0, 1, 2].map(() => [randomWord(), winWord, randomWord()]);
       return { isWin: true, triples };
     }
 
-    // Przegrana: środkowe NIE mogą być wszystkie identyczne
     let mids = [randomWord(), randomWord(), randomWord()];
     while (mids[0] === mids[1] && mids[1] === mids[2]) {
       mids[randInt(0, 2)] = randomWord();
     }
 
-    const triples = mids.map((mid) => [randomWord(), mid, randomWord()]);
+    const triples = mids.map(mid => [randomWord(), mid, randomWord()]);
     return { isWin: false, triples };
   }
 
@@ -197,8 +175,6 @@
     state.spinning = true;
 
     const outcome = chooseOutcome();
-
-    // Każde koło kończy później
     const durations = [1400, 1850, 2300];
 
     try {
@@ -208,101 +184,103 @@
         spinReelTo(state.reelStates[2], outcome.triples[2], durations[2]),
       ]);
 
-      if (outcome.isWin) {
-        showWinFlash();
-      }
+      if (outcome.isWin) showWinFlash();
     } finally {
       state.spinning = false;
     }
   }
 
-  // =========================
-  // Lever drag (always vertical)
-  // =========================
+  // ---------- lever (auto axis) ----------
   knob.style.touchAction = "none";
 
-  function getKnobAxisPos() {
-    const top = parseFloat(knob.style.top || "0");
-    return Number.isFinite(top) ? top : 0;
+  function leverAxis() {
+    const lever = knob.parentElement;
+    if (!lever) return "y";
+    // jeśli dłuższa oś to wysokość -> pion, inaczej poziom
+    return (lever.clientHeight >= lever.clientWidth) ? "y" : "x";
   }
 
-  function setKnobAxisPos(v) {
-    knob.style.top = `${v}px`;
-    // czyścimy left, bo wajcha ma być pionowa zawsze
-    knob.style.left = "";
+  function getKnobPos() {
+    const ax = leverAxis();
+    const v = parseFloat(ax === "y" ? (knob.style.top || "0") : (knob.style.left || "0"));
+    return Number.isFinite(v) ? v : 0;
   }
 
-  function getPullMax() {
+  function setKnobPos(v) {
+    const ax = leverAxis();
+    if (ax === "y") {
+      knob.style.top = `${v}px`;
+      knob.style.left = "";
+    } else {
+      knob.style.left = `${v}px`;
+      knob.style.top = "";
+    }
+  }
+
+  function pullMax() {
     const lever = knob.parentElement;
     if (!lever) return 0;
-    return Math.max(0, lever.clientHeight - knob.offsetHeight);
+    const ax = leverAxis();
+    return ax === "y"
+      ? Math.max(0, lever.clientHeight - knob.offsetHeight)
+      : Math.max(0, lever.clientWidth - knob.offsetWidth);
   }
 
-  function getPointerAxis(e) {
-    return e.clientY;
+  function pointerAxis(e) {
+    return leverAxis() === "y" ? e.clientY : e.clientX;
   }
 
   function returnKnob() {
     knob.classList.add("returning");
-    setKnobAxisPos(0);
-
-    window.setTimeout(() => {
-      knob.classList.remove("returning");
-    }, 220);
+    setKnobPos(0);
+    window.setTimeout(() => knob.classList.remove("returning"), 220);
   }
 
   knob.addEventListener("pointerdown", (e) => {
     if (state.spinning) return;
 
     state.dragActive = true;
-    state.dragStartPos = getPointerAxis(e);
-    state.knobStartPos = getKnobAxisPos();
-
+    state.dragStart = pointerAxis(e);
+    state.knobStart = getKnobPos();
     knob.classList.remove("returning");
 
     try { knob.setPointerCapture(e.pointerId); } catch (_) {}
-
     e.preventDefault();
   });
 
-  function onPointerMove(e) {
+  function onMove(e) {
     if (!state.dragActive) return;
-
-    const delta = getPointerAxis(e) - state.dragStartPos;
-    const maxPull = getPullMax();
-    const next = Math.max(0, Math.min(maxPull, state.knobStartPos + delta));
-
-    setKnobAxisPos(next);
+    const delta = pointerAxis(e) - state.dragStart;
+    const max = pullMax();
+    const next = Math.max(0, Math.min(max, state.knobStart + delta));
+    setKnobPos(next);
     e.preventDefault();
   }
 
-  function handlePointerRelease(e) {
+  function onRelease(e) {
     if (!state.dragActive) return;
     state.dragActive = false;
 
-    const pulled = getKnobAxisPos();
-    const maxPull = getPullMax();
-    const trigger = maxPull * 0.55;
+    const pulled = getKnobPos();
+    const max = pullMax();
+    const trigger = max * 0.55;
 
     returnKnob();
 
-    if (pulled >= trigger) {
-      startSpin();
-    }
+    if (pulled >= trigger) startSpin();
 
-    if (e && typeof knob.releasePointerCapture === "function" && e.pointerId !== undefined) {
+    if (e && typeof knob.releasePointerCapture === "function") {
       try { knob.releasePointerCapture(e.pointerId); } catch (_) {}
     }
   }
 
-  // Ruch i puszczenie obsługuj też globalnie (Safari/mobile bywa kapryśny)
-  knob.addEventListener("pointermove", onPointerMove);
-  window.addEventListener("pointermove", onPointerMove, { passive: false });
+  knob.addEventListener("pointermove", onMove);
+  window.addEventListener("pointermove", onMove, { passive: false });
 
-  knob.addEventListener("pointerup", handlePointerRelease);
-  knob.addEventListener("pointercancel", handlePointerRelease);
-  window.addEventListener("pointerup", handlePointerRelease);
-  window.addEventListener("pointercancel", handlePointerRelease);
+  knob.addEventListener("pointerup", onRelease);
+  knob.addEventListener("pointercancel", onRelease);
+  window.addEventListener("pointerup", onRelease);
+  window.addEventListener("pointercancel", onRelease);
 
   knob.addEventListener("lostpointercapture", () => {
     if (state.dragActive) {
@@ -311,43 +289,29 @@
     }
   });
 
-  // =========================
-  // Init
-  // =========================
+  // ---------- init ----------
   reels.forEach((reelEl) => {
     const trackEl = buildReelDOM(reelEl);
     const triple = randomTriple();
 
-    const reelState = {
-      reelEl,
-      trackEl,
-      currentTriple: triple.slice(),
-    };
-
+    const reelState = { reelEl, trackEl, currentTriple: triple.slice() };
     state.reelStates.push(reelState);
     setReelToTriple(reelState, triple);
   });
 
-  // zmierz finalny rowHeight po pierwszym renderze
   measureRowHeight();
 
-  // Po resize: reset wajchy + poprawne przeliczenie wysokości wiersza
+  // resize: reset lever + keep reels stable
   let resizeTimer = null;
   window.addEventListener("resize", () => {
     if (resizeTimer) clearTimeout(resizeTimer);
-
     resizeTimer = window.setTimeout(() => {
       if (!state.dragActive) {
         knob.classList.remove("returning");
-        setKnobAxisPos(0);
+        setKnobPos(0);
       }
-
       measureRowHeight();
-
-      // Utrzymaj aktualny stan slotów po zmianie rozmiaru
-      state.reelStates.forEach((reelState) => {
-        setReelToTriple(reelState, reelState.currentTriple);
-      });
+      state.reelStates.forEach(rs => setReelToTriple(rs, rs.currentTriple));
     }, 80);
   });
 })();
