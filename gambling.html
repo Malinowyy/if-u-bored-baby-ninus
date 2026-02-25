@@ -414,7 +414,7 @@
   <script>
     (function () {
       const WORDS = [
-        "kocham", "cie", "bardzo"
+        "całować", "bardzo", "przytulać", "widywać", "podziwiać", "wspierać", "na zawsze", "słuchać", "rozbawiać", "łaskotać", "drażnić", "trzymać", "uszczęśliwiać"
       ];
 
       const reels = Array.from(document.querySelectorAll(".reel"));
@@ -475,24 +475,47 @@
       }
 
       async function spinMachine() {
-        if (spinning) return;
-        spinning = true;
+  if (spinning) return;
+  spinning = true;
 
-        const finals = [randIndex(), randIndex(), randIndex()];
+  const WIN_RATE = 0.7; // 3%
+  const isWin = Math.random() < WIN_RATE;
 
-        await Promise.all([
-          spinOneReel(0, 1200, finals[0]),
-          spinOneReel(1, 1700, finals[1]),
-          spinOneReel(2, 2200, finals[2]),
-        ]);
+  let finals;
 
-        const centerWords = reelIndexes.map(i => WORDS[i]);
-        if (centerWords[0] === centerWords[1] && centerWords[1] === centerWords[2]) {
-          flashWin();
-        }
+  if (isWin) {
+    // WYGRANA: wszystkie 3 takie same
+    const w = randIndex();
+    finals = [w, w, w];
+  } else {
+    // PRZEGRANA: pilnujemy, żeby nie wyszły 3 takie same
+    const a = randIndex();
+    const b = randIndex();
+    let c = randIndex();
 
-        spinning = false;
-      }
+    // Jeśli przypadkiem wszystkie 3 są równe, zmień trzeci
+    if (a === b && b === c) {
+      // zakładamy, że WORDS.length >= 2
+      c = (c + 1) % WORDS.length;
+    }
+
+    finals = [a, b, c];
+  }
+
+  await Promise.all([
+    spinOneReel(0, 1200, finals[0]),
+    spinOneReel(1, 1700, finals[1]),
+    spinOneReel(2, 2200, finals[2]),
+  ]);
+
+  // sprawdzenie jak wcześniej
+  const centerWords = reelIndexes.map(i => WORDS[i]);
+  if (centerWords[0] === centerWords[1] && centerWords[1] === centerWords[2]) {
+    flashWin();
+  }
+
+  spinning = false;
+}
 
       // ===== Wajcha (drag + release) =====
       let dragging = false;
