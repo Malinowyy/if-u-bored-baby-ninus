@@ -1,5 +1,4 @@
 (() => {
-  const ROW_HEIGHT = 70;
   const WIN_RATE = 0.03;
 
   const WORDS = [
@@ -18,14 +17,14 @@
 
   if (reels.some(r => !r) || !knob || !winOverlay) return;
 
-  const isMobileLever = () => window.innerWidth <= 820;
-
   const state = {
     spinning: false,
     dragActive: false,
     dragStartPos: 0,
     knobStartPos: 0,
-    reelStates: [] // [{ reelEl, trackEl, currentTriple }]
+    reelStates: [],
+    rowHeight: 70,
+    winFlashTimer: null
   };
 
   // =========================
@@ -46,6 +45,11 @@
     return new Promise(res => requestAnimationFrame(() => res()));
   }
 
+  function forceReflow(el) {
+    // wymusza przeliczenie layoutu przed startem transition
+    void el.offsetHeight;
+  }
+
   function waitTransition(el, fallbackMs) {
     return new Promise((resolve) => {
       let done = false;
@@ -59,18 +63,25 @@
 
       const onEnd = (e) => {
         if (e.target !== el) return;
+        if (e.propertyName && e.propertyName !== "transform") return;
         finish();
       };
 
       el.addEventListener("transitionend", onEnd);
-      setTimeout(finish, fallbackMs);
+      window.setTimeout(finish, fallbackMs);
     });
   }
 
   function showWinFlash() {
+    if (state.winFlashTimer) {
+      clearTimeout(state.winFlashTimer);
+      state.winFlashTimer = null;
+    }
+
     winOverlay.classList.remove("hidden");
-    setTimeout(() => {
+    state.winFlashTimer = window.setTimeout(() => {
       winOverlay.classList.add("hidden");
+      state.winFlashTimer = null;
     }, 1000);
   }
 
@@ -84,12 +95,13 @@
         <div class="reel-centerline"></div>
       </div>
     `;
-    return reelEl.querySelector(".reel-track");
+    const track = reelEl.querySelector(".reel-track");
+    track.style.willChange = "transform";
+    return track;
   }
 
   function setTrackWords(trackEl, words) {
     trackEl.innerHTML = words.map((w, i) => {
-      // Tylko lekki class (nie musi być idealny)
       const cls = (i % 3 === 1) ? "reel-cell center-ish" : "reel-cell";
       return `<div class="${cls}">${w}</div>`;
     }).join("");
@@ -100,15 +112,28 @@
     trackEl.style.transform = `translateY(${y}px)`;
   }
 
+  function measureRowHeight() {
+    // bierzemy realną wysokość komórki z DOM (ważne na mobile)
+    const firstTrack = state.reelStates[0] && state.reelStates[0].trackEl;
+    if (!firstTrack) return;
+
+    const firstCell = firstTrack.querySelector(".reel-cell");
+    if (!firstCell) return;
+
+    const h = firstCell.getBoundingClientRect().height;
+    if (Number.isFinite(h) && h > 10) {
+      state.rowHeight = h;
+    }
+  }
+
   function setReelToTriple(reelState, triple) {
-    // Pokazuje dokładnie 3 słowa: górne, środkowe, dolne
     setTrackWords(reelState.trackEl, triple);
     setTrackPosition(reelState.trackEl, 0, false);
     reelState.currentTriple = triple.slice();
   }
 
   function buildSpinSequence(startTriple, endTriple, extraSteps) {
-    // startTriple widoczne na starcie, potem dużo losowych, na końcu finalne 3
+    // start -> sporo losowych -> end
     const seq = [...startTriple];
     for (let i = 0; i < extraSteps; i += 1) {
       seq.push(randomWord());
@@ -124,15 +149,19 @@
     setTrackWords(reelState.trackEl, sequence);
     setTrackPosition(reelState.trackEl, 0, false);
 
-    await nextFrame();
+    // przelicz row height po zbudowaniu tracka
+    measureRowHeight();
+
+    // wymuś layout zanim odpalimy transition
+    forceReflow(reelState.trackEl);
     await nextFrame();
 
-    const finalOffset = -((sequence.length - 3) * ROW_HEIGHT);
+    const finalOffset = -((sequence.length - 3) * state.rowHeight);
     setTrackPosition(reelState.trackEl, finalOffset, true, durationMs);
 
-    await waitTransition(reelState.trackEl, durationMs + 200);
+    await waitTransition(reelState.trackEl, durationMs + 300);
 
-    // Normalize (żeby nie trzymać wielkiej listy w DOM po każdym spinie)
+    // Normalize (czyścimy DOM po spinie)
     setReelToTriple(reelState, endTriple);
   }
 
@@ -155,7 +184,7 @@
       return { isWin: true, triples };
     }
 
-    // Przegrana: środkowe słowa NIE mogą być wszystkie takie same
+    // Przegrana: środkowe NIE mogą być wszystkie identyczne
     let mids = [randomWord(), randomWord(), randomWord()];
     while (mids[0] === mids[1] && mids[1] === mids[2]) {
       mids[randInt(0, 2)] = randomWord();
@@ -171,61 +200,55 @@
 
     const outcome = chooseOutcome();
 
-    // Każde koło kończy trochę później (fajniejszy efekt)
+    // Każde koło kończy później
     const durations = [1400, 1850, 2300];
 
-    await Promise.all([
-      spinReelTo(state.reelStates[0], outcome.triples[0], durations[0]),
-      spinReelTo(state.reelStates[1], outcome.triples[1], durations[1]),
-      spinReelTo(state.reelStates[2], outcome.triples[2], durations[2]),
-    ]);
+    try {
+      await Promise.all([
+        spinReelTo(state.reelStates[0], outcome.triples[0], durations[0]),
+        spinReelTo(state.reelStates[1], outcome.triples[1], durations[1]),
+        spinReelTo(state.reelStates[2], outcome.triples[2], durations[2]),
+      ]);
 
-    if (outcome.isWin) {
-      showWinFlash();
+      if (outcome.isWin) {
+        showWinFlash();
+      }
+    } finally {
+      state.spinning = false;
     }
-
-    state.spinning = false;
   }
 
   // =========================
-  // Lever drag (pointer events)
+  // Lever drag (always vertical)
   // =========================
+  knob.style.touchAction = "none";
+
   function getKnobAxisPos() {
-    if (isMobileLever()) {
-      const left = parseFloat(knob.style.left || "0");
-      return Number.isFinite(left) ? left : 0;
-    }
     const top = parseFloat(knob.style.top || "0");
     return Number.isFinite(top) ? top : 0;
   }
 
   function setKnobAxisPos(v) {
-    if (isMobileLever()) {
-      knob.style.left = `${v}px`;
-    } else {
-      knob.style.top = `${v}px`;
-    }
+    knob.style.top = `${v}px`;
+    // czyścimy left, bo wajcha ma być pionowa zawsze
+    knob.style.left = "";
   }
 
   function getPullMax() {
     const lever = knob.parentElement;
     if (!lever) return 0;
-
-    if (isMobileLever()) {
-      return Math.max(0, lever.clientWidth - knob.offsetWidth);
-    }
     return Math.max(0, lever.clientHeight - knob.offsetHeight);
   }
 
   function getPointerAxis(e) {
-    return isMobileLever() ? e.clientX : e.clientY;
+    return e.clientY;
   }
 
   function returnKnob() {
     knob.classList.add("returning");
     setKnobAxisPos(0);
 
-    setTimeout(() => {
+    window.setTimeout(() => {
       knob.classList.remove("returning");
     }, 220);
   }
@@ -240,10 +263,11 @@
     knob.classList.remove("returning");
 
     try { knob.setPointerCapture(e.pointerId); } catch (_) {}
+
     e.preventDefault();
   });
 
-  knob.addEventListener("pointermove", (e) => {
+  function onPointerMove(e) {
     if (!state.dragActive) return;
 
     const delta = getPointerAxis(e) - state.dragStartPos;
@@ -251,7 +275,8 @@
     const next = Math.max(0, Math.min(maxPull, state.knobStartPos + delta));
 
     setKnobAxisPos(next);
-  });
+    e.preventDefault();
+  }
 
   function handlePointerRelease(e) {
     if (!state.dragActive) return;
@@ -259,7 +284,7 @@
 
     const pulled = getKnobAxisPos();
     const maxPull = getPullMax();
-    const trigger = maxPull * 0.55; // trzeba pociągnąć min. 55%
+    const trigger = maxPull * 0.55;
 
     returnKnob();
 
@@ -267,13 +292,20 @@
       startSpin();
     }
 
-    if (e && typeof knob.releasePointerCapture === "function") {
+    if (e && typeof knob.releasePointerCapture === "function" && e.pointerId !== undefined) {
       try { knob.releasePointerCapture(e.pointerId); } catch (_) {}
     }
   }
 
+  // Ruch i puszczenie obsługuj też globalnie (Safari/mobile bywa kapryśny)
+  knob.addEventListener("pointermove", onPointerMove);
+  window.addEventListener("pointermove", onPointerMove, { passive: false });
+
   knob.addEventListener("pointerup", handlePointerRelease);
   knob.addEventListener("pointercancel", handlePointerRelease);
+  window.addEventListener("pointerup", handlePointerRelease);
+  window.addEventListener("pointercancel", handlePointerRelease);
+
   knob.addEventListener("lostpointercapture", () => {
     if (state.dragActive) {
       state.dragActive = false;
@@ -298,10 +330,26 @@
     setReelToTriple(reelState, triple);
   });
 
-  // Po resize reset pozycji wajchy (żeby mobile/desktop się nie rozjechało)
+  // zmierz finalny rowHeight po pierwszym renderze
+  measureRowHeight();
+
+  // Po resize: reset wajchy + poprawne przeliczenie wysokości wiersza
+  let resizeTimer = null;
   window.addEventListener("resize", () => {
-    if (state.dragActive) return;
-    knob.classList.remove("returning");
-    setKnobAxisPos(0);
+    if (resizeTimer) clearTimeout(resizeTimer);
+
+    resizeTimer = window.setTimeout(() => {
+      if (!state.dragActive) {
+        knob.classList.remove("returning");
+        setKnobAxisPos(0);
+      }
+
+      measureRowHeight();
+
+      // Utrzymaj aktualny stan slotów po zmianie rozmiaru
+      state.reelStates.forEach((reelState) => {
+        setReelToTriple(reelState, reelState.currentTriple);
+      });
+    }, 80);
   });
 })();
