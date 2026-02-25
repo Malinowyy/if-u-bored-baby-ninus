@@ -2,9 +2,7 @@
   const WIN_RATE = 0.03;
 
   const WORDS = [
-    "kocham", "ciebie", "misiu", "nina", "patryk", "przytulas", "buziak", "kino", "helios", "oaza",
-    "sandomierz", "agata", "koda", "kalkow", "antek", "bubbletea", "maple", "piosenka", "candle", "warszawa",
-    "bydgoszcz", "studia", "arcane", "dworzec", "cam", "lego", "badminton", "lisek", "charms", "ninus"
+    "kocham", "ciebie", "misiu", "nina", "patryk"
   ];
 
   const reels = [
