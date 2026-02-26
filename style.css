@@ -1268,3 +1268,31 @@ button:active,
 .reels-window::after {
   content: none !important;
 }
+/* === KILL SWITCH: usuń wszystkie "świecidełka" / tekstury / neony wewnątrz slotów === */
+
+/* 1) Wyłącz pseudo-elementy, które najczęściej robią tę siatkę/świetliki */
+.reel::before, .reel::after,
+.reel-viewport::before, .reel-viewport::after,
+.reel-track::before, .reel-track::after,
+.slot-machine::before, .slot-machine::after,
+.slots-window::before, .slots-window::after {
+  content: none !important;
+  display: none !important;
+}
+
+/* 2) Wyłącz tła/filtry które potrafią rysować "chaos" na wierzchu */
+.reel, .reel-viewport, .reel-track, .slots-window {
+  background-image: none !important;
+  filter: none !important;
+  backdrop-filter: none !important;
+  mix-blend-mode: normal !important;
+}
+
+/* 3) Jeśli masz osobny element typu overlay/glow/texture – ukryj go hurtowo */
+.texture, .noise, .grain, .glow, .sparkles, .scanlines, .pattern, .overlay {
+  display: none !important;
+}
+
+/* 4) Pewniak: tekst zawsze na wierzchu */
+.reel-track { position: relative !important; z-index: 5 !important; }
+.reel-cell  { position: relative !important; z-index: 6 !important; }
